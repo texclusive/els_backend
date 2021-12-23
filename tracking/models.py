@@ -22,6 +22,7 @@ class PriorityWithSigTracking(models.Model):
         return self.priority_with_sig
 
 
+
 class ExpressPriorityTracking(models.Model):
     express_priority = models.CharField(unique=True, blank=False, max_length=26, validators=[MinLengthValidator(26)])
     user = models.ForeignKey(User, on_delete=models.CASCADE)

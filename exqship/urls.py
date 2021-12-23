@@ -10,7 +10,10 @@ from tracking.views import (
     ListExpressPriorityTracking,
     DeleteExpressPriorityTracking,
     UploadExpressPriorityTracking,
-    ExpressTrackingCount
+    ExpressTrackingCount,
+    SigPriorityTrackingCount,
+    UploadSigPriorityTracking,
+    ListSigPriorityTracking
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -34,7 +37,15 @@ urlpatterns = [
      path('express-tracking-count/', ExpressTrackingCount.as_view(), name='express-tracking-count'),
      path('express-tracking-list/', ListExpressPriorityTracking.as_view(), name='express-tracking-list' ),
      path('upload-express/', UploadExpressPriorityTracking.as_view(), name='upload-express'),
-     path('delete/express/<str:express_priority>/', DeleteExpressPriorityTracking.as_view(), name='delete-express')
+     path('delete/express/<str:express_priority>/', DeleteExpressPriorityTracking.as_view(), name='delete-express'),
+
+
+     #priority
+     path('psig-tracking-count/', SigPriorityTrackingCount.as_view(), name='psig-tracking-count'),
+     path('upload-priority-sig/', UploadSigPriorityTracking.as_view(), name='upload-prior-sig'),
+     path('psig-tracking-list/', ListSigPriorityTracking.as_view(), name='psig-tracking-list' ),
+
+
      
     
 ]

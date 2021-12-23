@@ -5,9 +5,9 @@ from rest_framework.views import APIView
 from rest_framework import generics, status, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializer import PriorityTrackingSerializer, FileUploadSerializer, FileUploadSerializer1, UserListSerializer, ExpressPriorityTrackingSerializer
+from .serializer import PriorityTrackingSerializer, FileUploadSerializer, FileUploadSerializer1, FileUploadSerializer2, UserListSerializer, ExpressPriorityTrackingSerializer, SigPriorityTrackingSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import PriorityTracking, User, ExpressPriorityTracking
+from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking
 from django.db import IntegrityError
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 
@@ -209,6 +209,92 @@ class ListPriorityTracking(APIView):
 #             'email': user.email
 #         })
 
+
+
+# priorityWithSig
+class SigPriorityTrackingCount(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = PriorityWithSigTracking.objects.filter(user_id=request.user.id).count()
+        return Response({"psigcount" : qs})
+
+
+
+class UploadSigPriorityTracking(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = FileUploadSerializer2
+   
+    def post(self, request, *args, **kwargs):
+        # Get user trying to upload tracking
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                requested_user = ss.user
+                
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        file = serializer.validated_data['file']
+   
+        if not file.name.endswith('.csv'):
+            return Response({"status": "unsupported file"}, status.HTTP_406_NOT_ACCEPTABLE) 
+
+        reader = pd.read_csv(file)
+        for _, row in reader.iterrows():
+            new_file = PriorityWithSigTracking(
+                       priority_with_sig = row[0],
+                    #    priority = row['priority'],
+                       user = requested_user
+                       )
+            if len(new_file.priority_with_sig) < 26:
+                return Response({"status": "forbidden",
+                                "priority_with_sig": f"{new_file.priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
+            try:
+                PriorityWithSigTracking.objects.bulk_create([new_file])
+                # new_file.save()
+            except IntegrityError as e:
+                if 'UNIQUE constraint' in str(e.args):
+                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+
+        return Response({"status": "success"}, status.HTTP_201_CREATED)
+
+
+class DeleteSigPriorityTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request, priority_with_sig=None):
+        try:
+            qs = PriorityWithSigTracking.objects.get(priority_with_sig=priority_with_sig)
+            qs.delete()
+            return Response('Tracking deleted')
+        except PriorityWithSigTracking.DoesNotExist:
+            return Response('Tracking not found')
+
+
+
+class ListSigPriorityTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        qs = PriorityWithSigTracking.objects.all()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = PriorityWithSigTracking.objects.filter(user_id=ss.user.pk)[:10]
+
+        serializer = SigPriorityTrackingSerializer(qs, many=True)
+        if request.user:
+            return Response(serializer.data)
 
 
 

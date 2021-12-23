@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PriorityTracking, User, ExpressPriorityTracking
+from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking
 
 class PriorityTrackingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,5 +55,30 @@ class SaveFileSerializer1(serializers.Serializer):
         model = ExpressPriorityTracking
         fields = [
             'express_priority',
+            'user'
+            ]
+
+
+# priorityWithSig
+class SigPriorityTrackingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriorityWithSigTracking
+        fields = [
+            'priority_with_sig',
+            'user',
+            'pk'
+            # 'user'
+        ]
+
+class FileUploadSerializer2(serializers.Serializer):
+    file = serializers.FileField()
+
+
+
+class SaveFileSerializer2(serializers.Serializer):
+    class Meta:
+        model = PriorityWithSigTracking
+        fields = [
+            'priority_with_sig',
             'user'
             ]
