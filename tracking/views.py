@@ -5,11 +5,179 @@ from rest_framework.views import APIView
 from rest_framework import generics, status, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializer import PriorityTrackingSerializer, FileUploadSerializer, FileUploadSerializer1, FileUploadSerializer2, UserListSerializer, ExpressPriorityTrackingSerializer, SigPriorityTrackingSerializer
+from .serializer import (
+    PriorityTrackingSerializer, 
+    FileUploadSerializer, 
+    FileUploadSerializer1, 
+    FileUploadSerializer2, 
+    FileUploadSerializer3, 
+    UserListSerializer, 
+    ExpressPriorityTrackingSerializer, 
+    SigPriorityTrackingSerializer, 
+    SigExpressTrackingSerializer
+    )
 from rest_framework.permissions import IsAuthenticated
-from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking
+from .models import (
+    User,
+    PriorityTracking,  
+    ExpressPriorityTracking, 
+    PriorityWithSigTracking, 
+    ExpressWithSigPriorityTracking
+    )
 from django.db import IntegrityError
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import (
+    SessionAuthentication, 
+    BasicAuthentication, 
+    TokenAuthentication)                                                            
+from rest_framework.pagination import PageNumberPagination
+
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+
+#Delete all express with sig numbers
+class DeleteAllExpressWithSigNumber(APIView):
+    def delete(self, request, *args, **kwargs):
+        qs = ExpressWithSigPriorityTracking.objects.all()
+        # qs.delete()
+        print(qs)
+        return Response('You have sucessfully deleted all express with sig numbers')
+
+
+#Delete selected express with sig numbers
+class DeleteFromExpressWithSigNumber(APIView):
+    def delete(self, request, selected=None):
+        selectedNumber = selected.split(",") 
+        for index in range(0, len(selectedNumber)):
+            qs = ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=selectedNumber[index])
+            print(qs, 'working')
+            # qs.delete()
+            print(selectedNumber[index])
+        return Response('Working.....now on express with sig numbers')
+
+
+class ExpressWithSigTrackingSets(generics.ListAPIView):
+    # queryset = ExpressWithSigPriorityTracking.objects.all()
+    serializer_class = SigExpressTrackingSerializer
+    pagination_class = StandardResultsSetPagination
+
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return ExpressWithSigPriorityTracking.objects.filter(user_id=user_id)
+
+
+
+#Delete all priority with sig numbers
+class DeleteAllPriorityWithSigNumber(APIView):
+    def delete(self, request, *args, **kwargs):
+        qs = PriorityWithSigTracking.objects.all()
+        # qs.delete()
+        print(qs)
+        return Response('You have sucessfully deleted all priority with sig numbers')
+
+
+#Delete selected priority with sig numbers
+class DeleteFromPriorityWithSigNumber(APIView):
+    def delete(self, request, selected=None):
+        selectedNumber = selected.split(",") 
+        for index in range(0, len(selectedNumber)):
+            qs = PriorityWithSigTracking.objects.filter(priority_with_sig=selectedNumber[index])
+            print(qs, 'working')
+            # qs.delete()
+            print(selectedNumber[index])
+        return Response('Working.....now on priority with sig numbers')
+
+
+class PriorityWithSigTrackingSets(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # queryset = PriorityWithSigTracking.objects.all()
+    serializer_class = SigPriorityTrackingSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return PriorityWithSigTracking.objects.filter(user_id=user_id)
+
+    
+
+#Delete all express numbers
+class DeleteAllPriorityExpressNumber(APIView):
+    def delete(self, request, *args, **kwargs):
+        qs = ExpressPriorityTracking.objects.all()
+        # qs.delete()
+        print(qs)
+        return Response('You have sucessfully deleted all express numbers')
+
+
+#Delete selected express number
+class DeleteFromPriorityExpressTrackingList(APIView):
+    def delete(self, request, selected=None):
+        selectedNumber = selected.split(",") 
+        for index in range(0, len(selectedNumber)):
+            qs = ExpressPriorityTracking.objects.filter(express_priority=selectedNumber[index])
+            print(qs)
+            # qs.delete()
+            print(selectedNumber[index])
+        return Response('Working.....now on express')
+
+
+class ExpressPriorityTrackingSets(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # queryset = ExpressPriorityTracking.objects.all()
+    serializer_class = ExpressPriorityTrackingSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return ExpressPriorityTracking.objects.filter(user_id=user_id)
+
+
+#Delete all priority numbers
+class DeleteAllPriorityNumber(APIView):
+    def delete(self, request, *args, **kwargs):
+        qs = PriorityTracking.objects.all()
+        # qs.delete()
+        print(qs)
+        return Response('You have sucessfully deleted all numbers')
+
+
+# Delete selected priority numbers
+class DeleteFromPriorityTrackingList(APIView):
+    def delete(self, request, selected=None):
+        authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+        permission_classes = [IsAuthenticated]
+        
+        selectedNumber = selected.split(",") 
+        for index in range(0, len(selectedNumber)):
+            qs = PriorityTracking.objects.filter(priority=selectedNumber[index])
+            print(qs)
+            # qs.delete()
+            print(selectedNumber[index])
+        return Response('Successfully deleted')
+
+
+class PriorityTrackingSets(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # queryset = PriorityTracking.objects.all()
+    serializer_class = PriorityTrackingSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return PriorityTracking.objects.filter(user_id=user_id)
+
 
 
 
@@ -79,7 +247,8 @@ class UploadPriorityTracking(generics.CreateAPIView):
                 return Response({"status": "forbidden",
                                 "priority": f"{new_file.priority}"}, status.HTTP_403_FORBIDDEN)
             try:
-                new_file.save()
+                # new_file.save()
+                PriorityTracking.objects.bulk_create([new_file])
             except IntegrityError as e:
                 if 'UNIQUE constraint' in str(e.args):
                     return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
@@ -385,6 +554,100 @@ class ListExpressPriorityTracking(APIView):
         serializer = ExpressPriorityTrackingSerializer(qs, many=True)
         if request.user:
             return Response(serializer.data)
+
+
+
+
+# express with sig
+class SigExpressTrackingCount(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = ExpressWithSigPriorityTracking.objects.filter(user_id=request.user.id).count()
+        return Response({"pcountexpsig" : qs})
+
+
+
+class UploadSigExpressPriorityTracking(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = FileUploadSerializer3
+   
+    def post(self, request, *args, **kwargs):
+        # Get user trying to upload tracking
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                requested_user = ss.user
+                
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        file = serializer.validated_data['file']
+   
+        if not file.name.endswith('.csv'):
+            return Response({"status": "unsupported file"}, status.HTTP_406_NOT_ACCEPTABLE) 
+
+        reader = pd.read_csv(file)
+        for _, row in reader.iterrows():
+            new_file = ExpressWithSigPriorityTracking(
+                       express_priority_with_sig = row[0],
+                    #    priority = row['priority'],
+                       user = requested_user
+                       )
+            if len(new_file.express_priority_with_sig) < 26:
+                return Response({"status": "forbidden",
+                                "express_priority_with_sig": f"{new_file.express_priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
+            try:
+                ExpressWithSigPriorityTracking.objects.bulk_create([new_file])
+                # new_file.save()
+            except IntegrityError as e:
+                if 'UNIQUE constraint' in str(e.args):
+                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+
+        return Response({"status": "success"}, status.HTTP_201_CREATED)
+
+
+class DeleteSigExpressPriorityTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request, express_priority_with_sig=None):
+        try:
+            qs = ExpressWithSigPriorityTracking.objects.get(express_priority_with_sig=express_priority_with_sig)
+            qs.delete()
+            return Response('Tracking deleted')
+        except ExpressWithSigPriorityTracking.DoesNotExist:
+            return Response('Tracking not found')
+
+
+
+
+class ListSigExpressPriorityTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        qs = ExpressPriorityTracking.objects.all()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = ExpressWithSigPriorityTracking.objects.filter(user_id=ss.user.pk)[:10]
+
+        serializer = SigExpressTrackingSerializer(qs, many=True)
+        if request.user:
+            return Response(serializer.data)
+
+
+
+
+
 
 
 
