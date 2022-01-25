@@ -30,7 +30,8 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username',
-            'email'
+            'email',
+            'pk'
         ]
 
 

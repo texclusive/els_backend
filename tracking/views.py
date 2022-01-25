@@ -179,8 +179,6 @@ class PriorityTrackingSets(generics.ListAPIView):
         return PriorityTracking.objects.filter(user_id=user_id)
 
 
-
-
 # priority
 class DeleteUser(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
@@ -199,6 +197,7 @@ class DeleteUser(APIView):
 class UserList(APIView):
     def get(self, request, *args, **kwargs):
         qs = User.objects.all()
+        print(qs)
         serializer = UserListSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -252,7 +251,7 @@ class UploadPriorityTracking(generics.CreateAPIView):
             except IntegrityError as e:
                 if 'UNIQUE constraint' in str(e.args):
                     return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
-
+                    
         return Response({"status": "success"}, status.HTTP_201_CREATED)
 
 
@@ -387,10 +386,10 @@ class SigPriorityTrackingCount(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
-        for user in User.objects.all():
-            ss, token = Token.objects.get_or_create(user=user)
-            if ss.user.pk == request.user.id:
-                qs = PriorityWithSigTracking.objects.filter(user_id=request.user.id).count()
+        # for user in User.objects.all():
+        #     ss, token = Token.objects.get_or_create(user=user)
+        #     if ss.user.pk == request.user.id:
+        qs = PriorityWithSigTracking.objects.filter(user_id=request.user.id).count()
         return Response({"psigcount" : qs})
 
 
@@ -425,6 +424,10 @@ class UploadSigPriorityTracking(generics.CreateAPIView):
             if len(new_file.priority_with_sig) < 26:
                 return Response({"status": "forbidden",
                                 "priority_with_sig": f"{new_file.priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
+
+            elif PriorityWithSigTracking.objects.filter(priority_with_sig=new_file.priority_with_sig).exists():
+                print(PriorityWithSigTracking.objects.filter(priority_with_sig=new_file.priority_with_sig).exists())
+
             try:
                 PriorityWithSigTracking.objects.bulk_create([new_file])
                 # new_file.save()
