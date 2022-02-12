@@ -32,32 +32,27 @@ from rest_framework.authentication import (
 from rest_framework.pagination import PageNumberPagination
 
 
-
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
 
-
-#Delete all express with sig numbers
+# Delete all express with sig numbers
 class DeleteAllExpressWithSigNumber(APIView):
     def delete(self, request, *args, **kwargs):
         qs = ExpressWithSigPriorityTracking.objects.all()
-        # qs.delete()
-        print(qs)
+        qs.delete()
         return Response('You have sucessfully deleted all express with sig numbers')
 
 
-#Delete selected express with sig numbers
+# Delete selected express with sig numbers
 class DeleteFromExpressWithSigNumber(APIView):
     def delete(self, request, selected=None):
         selectedNumber = selected.split(",") 
         for index in range(0, len(selectedNumber)):
             qs = ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=selectedNumber[index])
-            print(qs, 'working')
-            # qs.delete()
-            print(selectedNumber[index])
+            qs.delete()
         return Response('Working.....now on express with sig numbers')
 
 
@@ -66,31 +61,28 @@ class ExpressWithSigTrackingSets(generics.ListAPIView):
     serializer_class = SigExpressTrackingSerializer
     pagination_class = StandardResultsSetPagination
 
-
     def get_queryset(self):
         user_id = self.request.user.id
         return ExpressWithSigPriorityTracking.objects.filter(user_id=user_id)
 
 
 
-#Delete all priority with sig numbers
+# Delete all priority with sig numbers
 class DeleteAllPriorityWithSigNumber(APIView):
     def delete(self, request, *args, **kwargs):
         qs = PriorityWithSigTracking.objects.all()
-        # qs.delete()
-        print(qs)
+        qs.delete()
         return Response('You have sucessfully deleted all priority with sig numbers')
 
 
-#Delete selected priority with sig numbers
+# Delete selected priority with sig numbers
 class DeleteFromPriorityWithSigNumber(APIView):
     def delete(self, request, selected=None):
         selectedNumber = selected.split(",") 
         for index in range(0, len(selectedNumber)):
             qs = PriorityWithSigTracking.objects.filter(priority_with_sig=selectedNumber[index])
-            print(qs, 'working')
-            # qs.delete()
-            print(selectedNumber[index])
+            qs.delete()
+            # print(selectedNumber[index])
         return Response('Working.....now on priority with sig numbers')
 
 
@@ -123,8 +115,7 @@ class DeleteFromPriorityExpressTrackingList(APIView):
         selectedNumber = selected.split(",") 
         for index in range(0, len(selectedNumber)):
             qs = ExpressPriorityTracking.objects.filter(express_priority=selectedNumber[index])
-            print(qs)
-            # qs.delete()
+            qs.delete()
             print(selectedNumber[index])
         return Response('Working.....now on express')
 
@@ -146,23 +137,17 @@ class ExpressPriorityTrackingSets(generics.ListAPIView):
 class DeleteAllPriorityNumber(APIView):
     def delete(self, request, *args, **kwargs):
         qs = PriorityTracking.objects.all()
-        # qs.delete()
-        print(qs)
-        return Response('You have sucessfully deleted all numbers')
+        qs.delete()
+        return Response('You have sucessfully deleted all numbers now now')
 
 
 # Delete selected priority numbers
 class DeleteFromPriorityTrackingList(APIView):
     def delete(self, request, selected=None):
-        authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-        permission_classes = [IsAuthenticated]
-        
         selectedNumber = selected.split(",") 
         for index in range(0, len(selectedNumber)):
             qs = PriorityTracking.objects.filter(priority=selectedNumber[index])
-            print(qs)
-            # qs.delete()
-            print(selectedNumber[index])
+            qs.delete()
         return Response('Successfully deleted')
 
 
@@ -218,10 +203,10 @@ class TrackingCount(APIView):
 class UploadPriorityTracking(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
     serializer_class = FileUploadSerializer
    
     def post(self, request, *args, **kwargs):
+        mydata = []
         # Get user trying to upload tracking
         for user in User.objects.all():
             ss, token = Token.objects.get_or_create(user=user)
@@ -242,15 +227,22 @@ class UploadPriorityTracking(generics.CreateAPIView):
                     #    priority = row['priority'],
                        user = requested_user
                        )
+            mydata.append(new_file)
             if len(new_file.priority) < 26:
                 return Response({"status": "forbidden",
-                                "priority": f"{new_file.priority}"}, status.HTTP_403_FORBIDDEN)
-            try:
-                # new_file.save()
-                PriorityTracking.objects.bulk_create([new_file])
-            except IntegrityError as e:
-                if 'UNIQUE constraint' in str(e.args):
-                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+                                "incomplete_number": f"{new_file.priority}"}, status.HTTP_403_FORBIDDEN)
+
+        for number in mydata:
+            if PriorityTracking.objects.filter(priority=number.priority).exists():
+                return Response({"existed_number": number.priority})
+
+        try:
+            # new_file.save()
+            PriorityTracking.objects.bulk_create(mydata)
+            return Response({"success": "success"}, status.HTTP_201_CREATED)
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e.args):
+                return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
                     
         return Response({"status": "success"}, status.HTTP_201_CREATED)
 
@@ -402,6 +394,8 @@ class UploadSigPriorityTracking(generics.CreateAPIView):
    
     def post(self, request, *args, **kwargs):
         # Get user trying to upload tracking
+        mydata = []
+
         for user in User.objects.all():
             ss, token = Token.objects.get_or_create(user=user)
             if ss.user.pk == request.user.id:
@@ -421,19 +415,24 @@ class UploadSigPriorityTracking(generics.CreateAPIView):
                     #    priority = row['priority'],
                        user = requested_user
                        )
+            mydata.append(new_file)
             if len(new_file.priority_with_sig) < 26:
                 return Response({"status": "forbidden",
-                                "priority_with_sig": f"{new_file.priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
+                                "incomplete_number": f"{new_file.priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
 
-            elif PriorityWithSigTracking.objects.filter(priority_with_sig=new_file.priority_with_sig).exists():
-                print(PriorityWithSigTracking.objects.filter(priority_with_sig=new_file.priority_with_sig).exists())
+        
+        for number in mydata:
+            if PriorityWithSigTracking.objects.filter(priority_with_sig=number.priority_with_sig).exists():
+                return Response({"existed_number": number.priority_with_sig})
+                 
 
-            try:
-                PriorityWithSigTracking.objects.bulk_create([new_file])
-                # new_file.save()
-            except IntegrityError as e:
-                if 'UNIQUE constraint' in str(e.args):
-                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+        try:
+            PriorityWithSigTracking.objects.bulk_create(mydata)
+            return Response({"success": "success"}, status.HTTP_201_CREATED)
+            # new_file.save()
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e.args):
+                return Response({"status": "duplicate found"})
 
         return Response({"status": "success"}, status.HTTP_201_CREATED)
 
@@ -490,10 +489,10 @@ class ExpressTrackingCount(APIView):
 class UploadExpressPriorityTracking(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
     serializer_class = FileUploadSerializer1
    
     def post(self, request, *args, **kwargs):
+        mydata = []
         # Get user trying to upload tracking
         for user in User.objects.all():
             ss, token = Token.objects.get_or_create(user=user)
@@ -514,15 +513,23 @@ class UploadExpressPriorityTracking(generics.CreateAPIView):
                     #    priority = row['priority'],
                        user = requested_user
                        )
+            mydata.append(new_file)
+
             if len(new_file.express_priority) < 26:
                 return Response({"status": "forbidden",
-                                "express_priority": f"{new_file.express_priority}"}, status.HTTP_403_FORBIDDEN)
-            try:
-                ExpressPriorityTracking.objects.bulk_create([new_file])
-                # new_file.save()
-            except IntegrityError as e:
-                if 'UNIQUE constraint' in str(e.args):
-                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+                                "incomplete_number": f"{new_file.express_priority}"}, status.HTTP_403_FORBIDDEN)
+
+        for number in mydata:
+            if ExpressPriorityTracking.objects.filter(express_priority=number.express_priority).exists():
+                return Response({"existed_number": number.express_priority})
+
+        try:
+            ExpressPriorityTracking.objects.bulk_create(mydata)
+            return Response({"success": "success"}, status.HTTP_201_CREATED)
+            # new_file.save()
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e.args):
+                return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
 
         return Response({"status": "success"}, status.HTTP_201_CREATED)
 
@@ -538,8 +545,6 @@ class DeleteExpressPriorityTracking(APIView):
             return Response('Tracking deleted')
         except ExpressPriorityTracking.DoesNotExist:
             return Response('Tracking not found')
-
-
 
 
 class ListExpressPriorityTracking(APIView):
@@ -583,6 +588,7 @@ class UploadSigExpressPriorityTracking(generics.CreateAPIView):
     serializer_class = FileUploadSerializer3
    
     def post(self, request, *args, **kwargs):
+        mydata = []
         # Get user trying to upload tracking
         for user in User.objects.all():
             ss, token = Token.objects.get_or_create(user=user)
@@ -600,20 +606,40 @@ class UploadSigExpressPriorityTracking(generics.CreateAPIView):
         for _, row in reader.iterrows():
             new_file = ExpressWithSigPriorityTracking(
                        express_priority_with_sig = row[0],
-                    #    priority = row['priority'],
                        user = requested_user
                        )
+            mydata.append(new_file)
+
             if len(new_file.express_priority_with_sig) < 26:
                 return Response({"status": "forbidden",
-                                "express_priority_with_sig": f"{new_file.express_priority_with_sig}"}, status.HTTP_403_FORBIDDEN)
-            try:
-                ExpressWithSigPriorityTracking.objects.bulk_create([new_file])
-                # new_file.save()
-            except IntegrityError as e:
-                if 'UNIQUE constraint' in str(e.args):
-                    return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+                                "incomplete_number": f"{new_file.express_priority_with_sig}"})
+        
+                
+            # elif ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=new_file.express_priority_with_sig).exists():
+            #     print(ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=new_file.express_priority_with_sig).exists())
+            #     return Response({"status": "Duplicate data found"}, status.HTTP_404_FORBIDDEN)
 
-        return Response({"status": "success"}, status.HTTP_201_CREATED)
+            # try:
+            #     ExpressWithSigPriorityTracking.objects.bulk_create([new_file])
+            #     # new_file.save()
+            # except IntegrityError as e:
+            #     if 'UNIQUE constraint' in str(e.args):
+            #         return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+        for number in mydata:
+            # print(x.express_priority_with_sig)
+            if ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=number.express_priority_with_sig).exists():
+                return Response({"status": "Duplicate data found",
+                                 "existed_number": f"{number.express_priority_with_sig}"})
+
+        try:
+            ExpressWithSigPriorityTracking.objects.bulk_create(mydata)
+            return Response({"success": "success"}, status.HTTP_201_CREATED)
+            # new_file.save()
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e.args):
+                return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+
+        # return Response({"success": "success"}, status.HTTP_201_CREATED)
 
 
 class DeleteSigExpressPriorityTracking(APIView):
@@ -627,8 +653,6 @@ class DeleteSigExpressPriorityTracking(APIView):
             return Response('Tracking deleted')
         except ExpressWithSigPriorityTracking.DoesNotExist:
             return Response('Tracking not found')
-
-
 
 
 class ListSigExpressPriorityTracking(APIView):
