@@ -16,7 +16,7 @@ from .serializer import (
     SigPriorityTrackingSerializer, 
     SigExpressTrackingSerializer
     )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import (
     User,
     PriorityTracking,  
@@ -167,22 +167,23 @@ class PriorityTrackingSets(generics.ListAPIView):
 # priority
 class DeleteUser(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     
     def delete(self, request, user_id=None):
         try:
-            qs = User.objects.get(user_id=user_id)
+            qs = User.objects.filter(pk=user_id)
+            print(qs)
             qs.delete()
+            # # print(user_pk)
+        
             return Response('User has been deleted')
         except PriorityTracking.DoesNotExist:
             return Response('User does not exist')
 
 
-
 class UserList(APIView):
     def get(self, request, *args, **kwargs):
         qs = User.objects.all()
-        print(qs)
         serializer = UserListSerializer(qs, many=True)
         return Response(serializer.data)
 

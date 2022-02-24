@@ -32,6 +32,7 @@ class UserListSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'pk'
+            
         ]
 
 
@@ -41,7 +42,7 @@ class ExpressPriorityTrackingSerializer(serializers.ModelSerializer):
         fields = [
             'express_priority',
             'user',
-            'pk'
+            
             # 'user'
         ]
 

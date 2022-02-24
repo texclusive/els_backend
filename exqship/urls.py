@@ -84,4 +84,6 @@ urlpatterns = [
     path('delete/priority/sig/<str:selected>/', DeleteFromPriorityWithSigNumber.as_view(), name='delete-priority-sig'),
     path('delete/all/express/sig', DeleteAllExpressWithSigNumber.as_view(), name='delete-all-express-sig'),
     path('delete/express/sig/<str:selected>/', DeleteFromExpressWithSigNumber.as_view(), name='delete-express-sig'),
+
+    path('delete/verified-user/<int:user_id>/', DeleteUser.as_view(), name='user-delete' )
 ]
