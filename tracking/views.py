@@ -1,4 +1,7 @@
+from ast import Store
 import io, csv, pandas as pd
+from django.dispatch import receiver
+from turtle import width
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +17,9 @@ from .serializer import (
     UserListSerializer, 
     ExpressPriorityTrackingSerializer, 
     SigPriorityTrackingSerializer, 
-    SigExpressTrackingSerializer
+    SigExpressTrackingSerializer,
+    LabelDataSerializer,
+    GeeksSerializer
     )
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import (
@@ -22,7 +27,8 @@ from .models import (
     PriorityTracking,  
     ExpressPriorityTracking, 
     PriorityWithSigTracking, 
-    ExpressWithSigPriorityTracking
+    ExpressWithSigPriorityTracking,
+    LabelData
     )
 from django.db import IntegrityError
 from rest_framework.authentication import (
@@ -30,12 +36,15 @@ from rest_framework.authentication import (
     BasicAuthentication, 
     TokenAuthentication)                                                            
 from rest_framework.pagination import PageNumberPagination
+from fpdf import FPDF, HTMLMixin
+from django.http import FileResponse, HttpResponse
+ 
 
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = 'page_size'
-    max_page_size = 1000
+    max_page_size = 50
 
 
 # Delete all express with sig numbers
@@ -673,6 +682,124 @@ class ListSigExpressPriorityTracking(APIView):
             return Response(serializer.data)
 
 
+class StoreData:
+    my_store = 'red'
+
+    def __init__(self, x):
+        self.x = x
+
+    def show(self):
+        print(f"{self.x}")
+
+class MyFPDF(FPDF, HTMLMixin):
+	pass
+
+
+def report(request):
+    get_stored_data = StoreData.my_store
+    senders_data = get_stored_data[0]
+    receiver_data = get_stored_data[1]
+    weight = get_stored_data[2]
+    barcode_target = get_stored_data[3]
+    number_data = get_stored_data[4]
+    today_date = get_stored_data[5]
+    sender_name = get_stored_data[6]
+    # print(x)
+    senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
+    receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
+    # print(y)
+
+
+    # sales = [
+    #     # {"item": "KEYBOARD KEYBOARD MOUSE NOTE" },
+    #     # {"item": "MOUSE", "amount": "$10,00"},
+    #     # {"item": "MOUSE", "amount": ""},
+    #     {"item": "SUNG HEIN" },
+    #     {"item": "197 BOYNTON RD"},
+    #     {"item": "HAMPTON GA 30228"},
+    # ]
+    # salesd = [
+    #     {"item": "NGUYEN TAO" },
+    #     {"item": "6055 BROOKS DR"},
+    #     {"item": "ARVADA CO 80004-5129" },
+    # ]
+    # data = (
+    #     ("First name", "Last name", "Age", "City"),
+    #     ("Jules", "Smith", "34", "San Juan"),
+    #     ("Mary", "Ramos\n \n Ramos \n    Ramos", "45", "Orlando"),
+    #     ("Lucas", "Cimon", "Saint-Mahturin-sur-Loire - it may even be so long that multiple lines are needed to write it down completely", "49"),
+    # )
+
+    pdf = MyFPDF('L', 'mm', 'letter')
+    pdf.add_page()
+    pdf.set_font('helvetica', '', 15)
+    pdf.set_line_width(0.8)
+    pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
+    pdf.image("staticfiles/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 55.3, 252.45, 55.3)
+    pdf.image("staticfiles/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 70.5, 252.45, 70.5)
+    pdf.set_xy(98.55, 73)
+    # for line in sales:
+    #     pdf.cell(170, 6, f"{line['item'].ljust(30)} {line['amount'].rjust(15)}", 0, 1,'L')
+    pdf.set_xy(204.5, 72.5)
+    pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
+    # pdf.cell(50, 6, "Ship Date:07/29/22", 0, 1,'L')
+
+    pdf.set_xy(212, 80)
+    pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
+    
+    for index in range(len(senders_info)):
+        for key in senders_info[index]:
+            incre_by_one = index * 6
+            incre = 73 + incre_by_one
+            pdf.set_xy(99, incre)
+            pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+
+    for index in range(len(receivers_info)):
+        for key in receivers_info[index]:
+            incre_by_one = index * 6
+            incre = 119.5 + incre_by_one
+            pdf.set_xy(118.5, incre)
+            pdf.set_font('helvetica', '', 14.8)
+            pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
+
+
+    pdf.line(98.55, 153, 252.45, 153)
+    pdf.set_font('helvetica', 'B', 12)  
+    pdf.text(155.4, 159, 'USPS TRACKING #EP')
+    # pdf.image(image_url)
+    # pdf.image("{}".format(image_url))
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.set_font('helvetica', 'B', 13.5)  
+    pdf.text(137.5, 197, "{}".format(number_data))
+    # pdf.text(137.5, 197, '9210 3564 7281 3047 3532 7281 31')
+    pdf.line(98.55, 198.55, 252.45, 198.55)
+    pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+  
+    pdf.output('{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+
+
+# Delete selected express with sig numbers
+class GetData(APIView):
+    # serializer_class = FileUploadSerializer3
+    def post(self, request, selected=None):
+        incomingData = request.data
+        StoreData.my_store = incomingData
+
+        # x = s[0]
+        # print(x)
+        # serializer = LabelDataSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     print(serializer)
+        #     # serializer.save()
+        #     return Response('http://127.0.0.1:8000/report')
+#             return Response(serializer.data)
+        # y =list(map(lambda x:{x[0]:x[1]},x.items() ))
+        # print(y)
+           
+        return Response('http://127.0.0.1:8000/report')
 
 
 
@@ -686,3 +813,104 @@ class ListSigExpressPriorityTracking(APIView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# "p", "in", [5.27, 7.98]
+      # if len(output) > row_height_lines:
+        #     row_height_lines = len(output)
+                
+        # for tlines , datum in zip(lines_in_row, row):
+        #     # here you can hack-in the
+        #     text =datum.rstrip('\n') + (1 + row_height_lines - tlines) * '\n'
+        #     pdf.multi_cell(col_width, line_height, text, border=0, ln=3)
+        # pdf.ln(row_height_lines * line_height)
+
+    # for row in data:
+    #     row_height_lines = 1
+    #     lines_in_row = []
+    #     for datum in row: # determine height of highest cell
+    #         output = pdf.multi_cell(col_width, line_height, datum, border=0, ln=3, split_only=True)
+    #         print(len(output))
+    #         lines_in_row.append(len(output))
+    #         if len(output) > row_height_lines:
+    #             row_height_lines = len(output)
+
+    #     for tlines , datum in zip(lines_in_row, row):
+    #         # here you can hack-in the
+    #         text =datum.rstrip('\n') + (1 + row_height_lines - tlines) * '\n'
+    #         pdf.multi_cell(col_width, line_height, text, border=0, ln=3)
+    #     pdf.ln(row_height_lines * line_height)
+    # index = 0
+    # for line in salesd: 
+    #     for key in line:
+    #         print(index)
+    #         pdf.set_xy(20, 105)
+    #         pdf.cell(170, 6, f"{line[key].ljust(30)}", 0, 1, )
+    # for line in salesd: 
+    #     pdf.set_xy(20, 105)
+    #     pdf.cell(170, 6, f"{line['item'].ljust(30)}", 0, 1, )
+    # pdf.cell(10, 50, txt = 'John Do', border = 0, ln = 0, align = '', fill = False, link = '')
+    # pdf.cell(10, 65, txt = '64 Ajegunle', border = 0, ln = 0, align = '', fill = False, link = '')
+    # pdf.cell(10, 55, f"{'Item'} {'Amount'}", 0, 0)
+    # pdf.text(10, 75, 'Barv')
+    # pdf.cell(10, 100, 'This is what you have sold this month so far:',0,0)
+    # pdf.cell(40, 10, '',0,1)
+    # pdf.set_font('courier', '', 12)
+    
+    # pdf.line(10, 30, 150, 30)
+    # pdf.line(10, 38, 150, 38)
+    # for line in sales:
+    #     pdf.cell(200, 8, f"{line['item'].ljust(30)} {line['amount'].rjust(20)}", 0, 1)
+
+
+
+
+
+
+
+
+#  line_height = pdf.font_size * 1.5
+#     col_width = pdf.epw /6   # distribute content evenly
+#     row_height_lines = 1
+
+#     # pdf.multi_cell(col_width, line_height, f"{datum['item']}", border=0, ln=3)
+#     for datum in salesd:
+#         pdf.multi_cell(col_width, line_height, datum['item'], border=0, ln=3)
+
+   # pdf.set_font('arial', 'B', 20)
+#     pdf.write_html("""
+#    <table border="0" align="center" width="50%">
+#         <thead>
+#             <tr>
+#                 <th width="100%"><img src="staticfiles/images/1p.jpg"/></th>            
+#             </tr>
+#         </thead>
+#         <tbody>
+#         <tbody>
+#             <tr>
+#                 <td><img src="staticfiles/images/p2.png"/></td> 
+#             </tr>
+            
+#         </tbody>
+
+        
+#     </table>
+# """)

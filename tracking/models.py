@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
+from jsonfield import JSONField
 
 
 User = get_user_model()
@@ -37,5 +39,9 @@ class ExpressWithSigPriorityTracking(models.Model):
 
     def __str__(self):
         return self.express_priority_with_sig
+        
+
+class LabelData(models.Model):
+    senderData = JSONField()
     
 

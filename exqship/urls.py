@@ -30,7 +30,9 @@ from tracking.views import (
     DeleteFromPriorityTrackingList,
     DeleteFromPriorityExpressTrackingList,
     DeleteFromPriorityWithSigNumber,
-    DeleteFromExpressWithSigNumber
+    DeleteFromExpressWithSigNumber,
+    GetData,
+    report,
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -85,5 +87,9 @@ urlpatterns = [
     path('delete/all/express/sig', DeleteAllExpressWithSigNumber.as_view(), name='delete-all-express-sig'),
     path('delete/express/sig/<str:selected>/', DeleteFromExpressWithSigNumber.as_view(), name='delete-express-sig'),
 
-    path('delete/verified-user/<int:user_id>/', DeleteUser.as_view(), name='user-delete' )
+    path('delete/verified-user/<int:user_id>/', DeleteUser.as_view(), name='user-delete' ),
+    path('report/', report, name='report' ),
+    path('datapop/', GetData.as_view(), name='datap')   
+    
+
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PriorityTracking, PriorityWithSigTracking, ExpressPriorityTracking, ExpressWithSigPriorityTracking
+from .models import PriorityTracking, PriorityWithSigTracking, ExpressPriorityTracking, ExpressWithSigPriorityTracking, LabelData
 
 
 class FileAdmin(admin.ModelAdmin):
@@ -13,10 +13,13 @@ class FileAdmin2(admin.ModelAdmin):
 
 class FileAdmin3(admin.ModelAdmin):
     list_display = ["express_priority_with_sig", "user"]
-    
+
+class FileAdmin4(admin.ModelAdmin):
+    list_display = ["senderData"]
 
 # Register your models here.
 admin.site.register(PriorityTracking, FileAdmin)
 admin.site.register(PriorityWithSigTracking, FileAdmin1)
 admin.site.register(ExpressPriorityTracking, FileAdmin2)
 admin.site.register(ExpressWithSigPriorityTracking, FileAdmin3)
+admin.site.register(LabelData, FileAdmin4)
