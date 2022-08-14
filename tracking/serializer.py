@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking, ExpressWithSigPriorityTracking, LabelData
+from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking, ExpressWithSigPriorityTracking, LabelData, LabelList
 
 class PriorityTrackingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -120,4 +120,8 @@ class LabelDataSerializer(serializers.ModelSerializer):
         fields = [
             'senderData',
             ]
-        
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LabelList
+        fields = ['mylist']

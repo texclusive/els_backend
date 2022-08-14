@@ -38,6 +38,7 @@ from rest_framework.authentication import (
 from rest_framework.pagination import PageNumberPagination
 from fpdf import FPDF, HTMLMixin
 from django.http import FileResponse, HttpResponse
+from rest_framework.exceptions import ParseError
  
 
 
@@ -262,12 +263,12 @@ class DeletePriorityTracking(APIView):
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, priority=None):
-        try:
-            qs = PriorityTracking.objects.get(priority=priority)
+        qs = PriorityTracking.objects.filter(priority=priority)
+        if qs.exists():
             qs.delete()
-            return Response('Tracking deleted')
-        except PriorityTracking.DoesNotExist:
-            return Response('Tracking not found')
+            return Response('number has been successfully deleted')
+        else:
+            raise ParseError('number has been used')
 
 
         # qs = PriorityTracking.objects.get(priority=priority)
@@ -452,12 +453,12 @@ class DeleteSigPriorityTracking(APIView):
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, priority_with_sig=None):
-        try:
-            qs = PriorityWithSigTracking.objects.get(priority_with_sig=priority_with_sig)
+        qs = PriorityWithSigTracking.objects.filter(priority_with_sig=priority_with_sig)
+        if qs.exists():
             qs.delete()
-            return Response('Tracking deleted')
-        except PriorityWithSigTracking.DoesNotExist:
-            return Response('Tracking not found')
+            return Response('number has been successfully deleted')
+        else:
+            raise ParseError('number has been used')
 
 
 
@@ -549,12 +550,22 @@ class DeleteExpressPriorityTracking(APIView):
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, express_priority=None):
-        try:
-            qs = ExpressPriorityTracking.objects.get(express_priority=express_priority)
+        qs = ExpressPriorityTracking.objects.filter(express_priority=express_priority)
+        if qs.exists():
             qs.delete()
-            return Response('Tracking deleted')
-        except ExpressPriorityTracking.DoesNotExist:
-            return Response('Tracking not found')
+            return Response('number has been successfully deleted')
+        else:
+            raise ParseError('number has been used')
+            # return Response('no match found')
+
+        # qs.delete()
+        
+        # try:
+        #     qs = ExpressPriorityTracking.objects.get(express_priority=express_priority)
+        #     qs.delete()
+        #     return Response('Tracking deleted')
+        # except ExpressPriorityTracking.DoesNotExist:
+        #     return Response('Tracking not found')
 
 
 class ListExpressPriorityTracking(APIView):
@@ -657,12 +668,13 @@ class DeleteSigExpressPriorityTracking(APIView):
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, express_priority_with_sig=None):
-        try:
-            qs = ExpressWithSigPriorityTracking.objects.get(express_priority_with_sig=express_priority_with_sig)
+        qs = ExpressWithSigPriorityTracking.objects.filter(express_priority_with_sig=express_priority_with_sig)
+        if qs.exists():
             qs.delete()
-            return Response('Tracking deleted')
-        except ExpressWithSigPriorityTracking.DoesNotExist:
-            return Response('Tracking not found')
+            return Response('number has been successfully deleted')
+        else:
+            raise ParseError('number has been used')
+             
 
 
 class ListSigExpressPriorityTracking(APIView):
@@ -704,31 +716,8 @@ def report(request):
     number_data = get_stored_data[4]
     today_date = get_stored_data[5]
     sender_name = get_stored_data[6]
-    # print(x)
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
-    # print(y)
-
-
-    # sales = [
-    #     # {"item": "KEYBOARD KEYBOARD MOUSE NOTE" },
-    #     # {"item": "MOUSE", "amount": "$10,00"},
-    #     # {"item": "MOUSE", "amount": ""},
-    #     {"item": "SUNG HEIN" },
-    #     {"item": "197 BOYNTON RD"},
-    #     {"item": "HAMPTON GA 30228"},
-    # ]
-    # salesd = [
-    #     {"item": "NGUYEN TAO" },
-    #     {"item": "6055 BROOKS DR"},
-    #     {"item": "ARVADA CO 80004-5129" },
-    # ]
-    # data = (
-    #     ("First name", "Last name", "Age", "City"),
-    #     ("Jules", "Smith", "34", "San Juan"),
-    #     ("Mary", "Ramos\n \n Ramos \n    Ramos", "45", "Orlando"),
-    #     ("Lucas", "Cimon", "Saint-Mahturin-sur-Loire - it may even be so long that multiple lines are needed to write it down completely", "49"),
-    # )
 
     pdf = MyFPDF('L', 'mm', 'letter')
     pdf.add_page()
@@ -740,11 +729,9 @@ def report(request):
     pdf.image("staticfiles/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 70.5, 252.45, 70.5)
     pdf.set_xy(98.55, 73)
-    # for line in sales:
-    #     pdf.cell(170, 6, f"{line['item'].ljust(30)} {line['amount'].rjust(15)}", 0, 1,'L')
     pdf.set_xy(204.5, 72.5)
     pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
-    # pdf.cell(50, 6, "Ship Date:07/29/22", 0, 1,'L')
+
 
     pdf.set_xy(212, 80)
     pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
@@ -768,15 +755,11 @@ def report(request):
     pdf.line(98.55, 153, 252.45, 153)
     pdf.set_font('helvetica', 'B', 12)  
     pdf.text(155.4, 159, 'USPS TRACKING #EP')
-    # pdf.image(image_url)
-    # pdf.image("{}".format(image_url))
     pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
-    # pdf.text(137.5, 197, '9210 3564 7281 3047 3532 7281 31')
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-  
     pdf.output('{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
@@ -846,12 +829,78 @@ def report_sig(request):
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
+
+def report_exp(request):
+    get_stored_data = StoreData.my_store
+    senders_data = get_stored_data[0]
+    receiver_data = get_stored_data[1]
+    weight = get_stored_data[2]
+    barcode_target = get_stored_data[3]
+    number_data = get_stored_data[4]
+    today_date = get_stored_data[5]
+    sender_name = get_stored_data[6]
+    senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
+    receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
+
+    pdf = MyFPDF('L', 'mm', 'letter')
+    pdf.add_page()
+    pdf.set_font('helvetica', '', 14.8)
+    pdf.set_line_width(0.8)
+    pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
+    pdf.image("staticfiles/images/e.png", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 54.3, 252.45, 54.3)
+    pdf.image("staticfiles/images/e2.png", x = 98.70, y = 54.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 69.5, 252.45, 69.5)
+    pdf.set_xy(98.55, 72)
+    pdf.set_xy(204.5, 71.5)
+    pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
+
+
+    pdf.set_xy(212, 79)
+    pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
+    
+    for index in range(len(senders_info)):
+        for key in senders_info[index]:
+            incre_by_one = index * 6
+            incre = 71 + incre_by_one
+            pdf.set_xy(99, incre)
+            pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+    
+    pdf.text(99, 102, 'SIGNATURE WAIVED')
+
+    for index in range(len(receivers_info)):
+        for key in receivers_info[index]:
+            incre_by_one = index * 6
+            incre = 119.5 + incre_by_one
+            pdf.set_xy(118.5, incre)
+            pdf.set_font('helvetica', '', 14.8)
+            pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
+
+
+    
+    pdf.line(98.55, 153, 252.45, 153)
+    pdf.set_font('helvetica', 'B', 12)  
+    pdf.text(155.4, 159, 'USPS TRACKING #EP')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.set_font('helvetica', 'B', 13.5)  
+    pdf.text(137.5, 197, "{}".format(number_data))
+    pdf.line(98.55, 198.55, 252.45, 198.55)
+    pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.output('{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+
+
+
 # Delete selected express with sig numbers
 class GetData(APIView):
     # serializer_class = FileUploadSerializer3
     def post(self, request, selected=None):
         incomingData = request.data
         StoreData.my_store = incomingData
+
+
+
+        
 
         # x = s[0]
         # print(x)
@@ -876,6 +925,17 @@ class GetDataSig(APIView):
         StoreData.my_store = incomingData
            
         return Response('http://127.0.0.1:8000/report/sig')
+
+
+# Delete selected express with sig numbers
+class GetDataExp(APIView):
+    # serializer_class = FileUploadSerializer3
+    def post(self, request, selected=None):
+        incomingData = request.data
+        StoreData.my_store = incomingData
+           
+        return Response('http://127.0.0.1:8000/report/exp')
+
 
 
 

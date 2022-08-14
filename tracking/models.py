@@ -3,6 +3,7 @@ from django.core.validators import MinLengthValidator
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from jsonfield import JSONField
+from django.contrib.postgres.fields import ArrayField
 
 
 User = get_user_model()
@@ -43,5 +44,13 @@ class ExpressWithSigPriorityTracking(models.Model):
 
 class LabelData(models.Model):
     senderData = JSONField()
+
+
+class LabelList(models.Model):
+    mylist = ArrayField(
+        ArrayField(
+            models.CharField(max_length=10, blank=True)
+            )
+    )
     
 
