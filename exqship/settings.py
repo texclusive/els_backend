@@ -33,10 +33,10 @@ DEBUG = True
 # for heroku
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
-# # for heroku
-# ALLOWED_HOSTS = ["*"]
+# for heroku
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
