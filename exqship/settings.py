@@ -30,8 +30,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 
-# # for heroku
-# DEBUG = False
+# for heroku
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
