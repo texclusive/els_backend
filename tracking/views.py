@@ -751,18 +751,18 @@ def report(request):
             pdf.set_font('helvetica', '', 14.8)
             pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
 
-
     pdf.line(98.55, 153, 252.45, 153)
     pdf.set_font('helvetica', 'B', 12)  
     pdf.text(155.4, 159, 'USPS TRACKING #EP')
-    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=12.2&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     pdf.output('{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
-
 
 
 def report_sig(request):
@@ -818,7 +818,7 @@ def report_sig(request):
     pdf.text(140.4, 159, 'USPS SIGNATURE TRACKING #EP')
     # pdf.image(image_url)
     # pdf.image("{}".format(image_url))
-    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     # pdf.text(137.5, 197, '9210 3564 7281 3047 3532 7281 31')
@@ -898,7 +898,7 @@ class GetData(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
 
-
+        return Response('http://127.0.0.1:8000/report')
 
         
 
@@ -913,7 +913,7 @@ class GetData(APIView):
         # y =list(map(lambda x:{x[0]:x[1]},x.items() ))
         # print(y)
            
-        return Response('http://127.0.0.1:8000/report')
+        
 
 
 
