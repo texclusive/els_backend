@@ -1,13 +1,13 @@
 # from ast import Store
 import io, csv, pandas as pd
 from django.dispatch import receiver
-# from turtle import width
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, status, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+# from turtle import width
 from .serializer import (
     PriorityTrackingSerializer, 
     FileUploadSerializer, 
