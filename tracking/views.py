@@ -737,7 +737,7 @@ def report(request):
     pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
     
     for index in range(len(senders_info)):
-        for key in senders_info[index]:
+        for key in senders_info[index]: 
             incre_by_one = index * 6
             incre = 73 + incre_by_one
             pdf.set_xy(99, incre)

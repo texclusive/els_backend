@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import django_heroku
 import os
+ 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r3farehj+5!9(4ezzfvj0(g)0m=#3^kl(d@^uv-n0rxem*)-9y'
+# SECRET_KEY = 'django-insecure-r3farehj+5!9(4ezzfvj0(g)0m=#3^kl(d@^uv-n0rxem*)-9y'
+SECRET_KEY = 'django-insecure-r3farehj+5!9(4ezzfvj0(g)0m=#3^kl(d@^uv-n0rxem*)-9z'
 
 # # for heroku
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
@@ -181,9 +183,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
@@ -203,4 +207,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 # )
 
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False)
