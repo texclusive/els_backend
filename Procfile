@@ -1,1 +1,1 @@
-web: gunicorn exqship.wsgi
+web: gunicorn exqship.wsgi 
