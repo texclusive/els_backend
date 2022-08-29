@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-r3farehj+5!9(4ezzfvj0(g)0m=#3^kl(d@^uv-n0rxem*)-9y
 
 
 # # for heroku
-# DEBUG = False
+DEBUG = False
 
 # ALLOWED_HOSTS = []
 
