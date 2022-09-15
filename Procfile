@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath exqship exqship.wsgi 
+web: gunicorn exqship.wsgi 
