@@ -884,6 +884,8 @@ def report(request):
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     pdf.output('{}.pdf'.format(sender_name), 'F')
+    StoreData.my_store = ''
+    print(StoreData.my_store)
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
@@ -1164,8 +1166,8 @@ class GetDataSig(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
            
-        # return Response('http://127.0.0.1:8000/report/sig')
-        return Response('https://texclusive.herokuapp.com/report/sig')
+        return Response('http://127.0.0.1:8000/report/sig')
+        # return Response('https://texclusive.herokuapp.com/report/sig')
 
 
 # Delete selected express with sig numbers
@@ -1175,9 +1177,9 @@ class GetDataExp(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
            
-        # return Response('http://127.0.0.1:8000/report/exp')
+        return Response('http://127.0.0.1:8000/report/exp')
 
-        return Response('https://texclusive.herokuapp.com/report/exp')
+        # return Response('https://texclusive.herokuapp.com/report/exp')
 
 
 # Delete selected express with sig numbers
@@ -1187,9 +1189,9 @@ class GetDataFirstClass(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
            
-        # return Response('http://127.0.0.1:8000/report/fc')
+        return Response('http://127.0.0.1:8000/report/fc')
 
-        return Response('https://texclusive.herokuapp.com/report/fc')
+        # return Response('https://texclusive.herokuapp.com/report/fc')
 
 
 
