@@ -12,6 +12,9 @@ from tracking.views import (
     UploadExpressPriorityTracking,
     ExpressTrackingCount,
     SigPriorityTrackingCount,
+    FirstClasTrackingCount,
+    ListFirstClassTracking,
+    UploadFirstClassTracking,
     UploadSigPriorityTracking,
     ListSigPriorityTracking,
     DeleteSigPriorityTracking,
@@ -23,7 +26,9 @@ from tracking.views import (
     PriorityWithSigTrackingSets,
     ExpressPriorityTrackingSets,
     ExpressWithSigTrackingSets,
+    FirstClassTrackingSets,
     DeleteAllPriorityNumber,
+    DeleteAllFirstClassNumber,
     DeleteAllPriorityExpressNumber,
     DeleteAllPriorityWithSigNumber,
     DeleteAllExpressWithSigNumber,
@@ -31,12 +36,16 @@ from tracking.views import (
     DeleteFromPriorityExpressTrackingList,
     DeleteFromPriorityWithSigNumber,
     DeleteFromExpressWithSigNumber,
+    DeleteSingleFirstClassNumber,
+    DeleteFirstClassTracking,
     GetData,
     GetDataSig,
     GetDataExp,
+    GetDataFirstClass,
     report,
     report_sig,
-    report_exp
+    report_exp,
+    report_fc
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -80,6 +89,15 @@ urlpatterns = [
     path('priority/sig/set/', PriorityWithSigTrackingSets.as_view(), name='priority_with_sig_set'),
     path('express/set/', ExpressPriorityTrackingSets.as_view(), name='express_set'),
     path('express/sig/set/', ExpressWithSigTrackingSets.as_view(), name='express_sig_set'),
+    path('first/class/set/', FirstClassTrackingSets.as_view(), name='first_class'),
+
+    # first class
+    path('first/class/tracking-count/', FirstClasTrackingCount.as_view(), name='first-class-tracking-count'),
+    path('upload/first/class/', UploadFirstClassTracking.as_view(), name='upload-dirst-class'),
+    path('delete/first/class/<str:selected>/', DeleteSingleFirstClassNumber.as_view(), name='deletefirstclass'),
+    path('delete/all/first/class/', DeleteAllFirstClassNumber.as_view(), name='deleteallfirstclass'),
+    path('first/class/list/', ListFirstClassTracking.as_view(), name='firstclassbyuser'),
+    path('delete/fclass/<str:first_class>/', DeleteFirstClassTracking.as_view(), name='delete-fclass'),
     
 
     path('deletefromprioritylist/<str:selected>/', DeleteFromPriorityTrackingList.as_view(), name='deletefromprioritylist'),
@@ -95,8 +113,13 @@ urlpatterns = [
     path('report/', report, name='report'),
     path('report/sig', report_sig, name='reportsig'),
     path('report/exp', report_exp, name='reportexp'),
+    path('report/fc', report_fc, name='reportfc'),
     
     path('datapop/', GetData.as_view(), name='datap'),  
     path('datapop/sig', GetDataSig.as_view(), name='datapsig'),
-    path('datapop/exp', GetDataExp.as_view(), name='datapex')
+    path('datapop/exp', GetDataExp.as_view(), name='datapex'),
+    path('datapop/fc', GetDataFirstClass.as_view(), name='datafcfc'),
+
+
+    
 ]

@@ -1,4 +1,4 @@
-# from ast import Store
+from ast import Store
 import io, csv, pandas as pd
 from django.dispatch import receiver
 from django.shortcuts import render
@@ -7,17 +7,19 @@ from rest_framework.views import APIView
 from rest_framework import generics, status, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-# from turtle import width
+from turtle import width
 from .serializer import (
     PriorityTrackingSerializer, 
     FileUploadSerializer, 
     FileUploadSerializer1, 
     FileUploadSerializer2, 
     FileUploadSerializer3, 
+    FileUploadSerializer4,
     UserListSerializer, 
     ExpressPriorityTrackingSerializer, 
     SigPriorityTrackingSerializer, 
     SigExpressTrackingSerializer,
+    FirstClassSerializer,
     # LabelDataSerializer,
     # GeeksSerializer
     )
@@ -28,6 +30,7 @@ from .models import (
     ExpressPriorityTracking, 
     PriorityWithSigTracking, 
     ExpressWithSigPriorityTracking,
+    FirstClassTracking,
     # LabelData
     )
 from django.db import IntegrityError
@@ -46,6 +49,123 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 50
+
+
+class FirstClasTrackingCount(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = FirstClassTracking.objects.filter(user_id=request.user.id).count() 
+        return Response({"fcount" : qs})
+
+
+class UploadFirstClassTracking(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = FileUploadSerializer4
+   
+    def post(self, request, *args, **kwargs):
+        mydata = []
+        # Get user trying to upload tracking
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                requested_user = ss.user
+                
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        file = serializer.validated_data['file']
+   
+        if not file.name.endswith('.csv'):
+            return Response({"status": "unsupported file"}, status.HTTP_406_NOT_ACCEPTABLE) 
+
+        reader = pd.read_csv(file)
+        for _, row in reader.iterrows():
+            new_file = FirstClassTracking(
+                       first_class = row[0],
+                       user = requested_user
+                       )
+            mydata.append(new_file)
+            if len(new_file.first_class) < 26:
+                return Response({"status": "forbidden",
+                                "incomplete_number": f"{new_file.first_class}"}, status.HTTP_403_FORBIDDEN)
+
+        for number in mydata:
+            if FirstClassTracking.objects.filter(first_class=number.first_class).exists():
+                return Response({"existed_number": number.first_class})
+
+        try:
+            # new_file.save()
+            FirstClassTracking.objects.bulk_create(mydata)
+            return Response({"success": "success"}, status.HTTP_201_CREATED)
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e.args):
+                return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+                    
+        return Response({"status": "success"}, status.HTTP_201_CREATED)
+
+
+# Delete all first class
+class DeleteAllFirstClassNumber(APIView):
+    def delete(self, request, *args, **kwargs):
+        # incomplete....filter deletion by user
+        qs = FirstClassTracking.objects.all()
+        qs.delete()
+        return Response('You have sucessfully deleted all express with sig numbers')
+
+
+# Delete selected first class numbers
+class DeleteSingleFirstClassNumber(APIView):
+    def delete(self, request, selected=None):
+        selectedNumber = selected.split(",") 
+        for index in range(0, len(selectedNumber)):
+            qs = FirstClassTracking.objects.filter(first_class=selectedNumber[index])
+            qs.delete()
+        return Response('Successfully deleted')
+
+
+class ListFirstClassTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        qs = FirstClassTracking.objects.all()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = FirstClassTracking.objects.filter(user_id=ss.user.pk)[:10]
+
+        serializer = FirstClassSerializer(qs, many=True)
+        if request.user:
+            return Response(serializer.data)
+
+
+class FirstClassTrackingSets(generics.ListAPIView):
+    # queryset = ExpressWithSigPriorityTracking.objects.all()
+    serializer_class = FirstClassSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return FirstClassTracking.objects.filter(user_id=user_id)
+
+class DeleteFirstClassTracking(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request, first_class=None):
+        qs = FirstClassTracking.objects.filter(first_class=first_class)
+        if qs.exists():
+            qs.delete()
+            return Response('number has been successfully deleted')
+        else:
+            raise ParseError('number has been used')
 
 
 # Delete all express with sig numbers
@@ -724,9 +844,9 @@ def report(request):
     pdf.set_font('helvetica', '', 15)
     pdf.set_line_width(0.8)
     pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
-    pdf.image("staticfiles/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 55.3, 252.45, 55.3)
-    pdf.image("staticfiles/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 70.5, 252.45, 70.5)
     pdf.set_xy(98.55, 73)
     pdf.set_xy(204.5, 72.5)
@@ -760,7 +880,7 @@ def report(request):
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
-    pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     pdf.output('{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
@@ -783,9 +903,9 @@ def report_sig(request):
     pdf.set_font('helvetica', '', 15)
     pdf.set_line_width(0.8)
     pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
-    pdf.image("staticfiles/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 55.3, 252.45, 55.3)
-    pdf.image("staticfiles/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 70.5, 252.45, 70.5)
     pdf.set_xy(98.55, 73)
     # for line in sales:
@@ -823,14 +943,14 @@ def report_sig(request):
     pdf.text(137.5, 197, "{}".format(number_data))
     # pdf.text(137.5, 197, '9210 3564 7281 3047 3532 7281 31')
     pdf.line(98.55, 198.55, 252.45, 198.55)
-    pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
   
     pdf.output('{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 
-def report_exp(request):
+def report_exp_sig(request):
     get_stored_data = StoreData.my_store
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
@@ -847,9 +967,9 @@ def report_exp(request):
     pdf.set_font('helvetica', '', 14.8)
     pdf.set_line_width(0.8)
     pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
-    pdf.image("staticfiles/images/e.png", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/e.png", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 54.3, 252.45, 54.3)
-    pdf.image("staticfiles/images/e2.png", x = 98.70, y = 54.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.image("media/images/e2.png", x = 98.70, y = 54.75, w = 153.20, h = 0, type = '', link = '')
     pdf.line(98.55, 69.5, 252.45, 69.5)
     pdf.set_xy(98.55, 72)
     pdf.set_xy(204.5, 71.5)
@@ -885,10 +1005,127 @@ def report_exp(request):
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
-    pdf.image("staticfiles/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     pdf.output('{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
 
+
+
+def report_exp(request):
+    get_stored_data = StoreData.my_store
+    senders_data = get_stored_data[0]
+    receiver_data = get_stored_data[1]
+    weight = get_stored_data[2]
+    barcode_target = get_stored_data[3]
+    number_data = get_stored_data[4]
+    today_date = get_stored_data[5]
+    sender_name = get_stored_data[6]
+    senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
+    receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
+
+    pdf = MyFPDF('L', 'mm', 'letter')
+    pdf.add_page()
+    pdf.set_font('helvetica', '', 14.8)
+    pdf.set_line_width(0.8)
+    pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
+    pdf.image("media/images/e.png", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 54.3, 252.45, 54.3)
+    pdf.image("media/images/e2.png", x = 98.70, y = 54.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 69.5, 252.45, 69.5)
+    pdf.set_xy(98.55, 72)
+    pdf.set_xy(204.5, 71.5)
+    pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
+
+
+    pdf.set_xy(212, 79)
+    pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
+    
+    for index in range(len(senders_info)):
+        for key in senders_info[index]:
+            incre_by_one = index * 6
+            incre = 71 + incre_by_one
+            pdf.set_xy(99, incre)
+            pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+    
+    pdf.text(99, 102, 'SIGNATURE WAIVED')
+
+    for index in range(len(receivers_info)):
+        for key in receivers_info[index]:
+            incre_by_one = index * 6
+            incre = 119.5 + incre_by_one
+            pdf.set_xy(118.5, incre)
+            pdf.set_font('helvetica', '', 14.8)
+            pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
+
+
+    
+    pdf.line(98.55, 153, 252.45, 153)
+    pdf.set_font('helvetica', 'B', 12)  
+    pdf.text(155.4, 159, 'USPS TRACKING #EP')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.set_font('helvetica', 'B', 13.5)  
+    pdf.text(137.5, 197, "{}".format(number_data))
+    pdf.line(98.55, 198.55, 252.45, 198.55)
+    pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.output('{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+
+
+def report_fc(request):
+    get_stored_data = StoreData.my_store
+    senders_data = get_stored_data[0]
+    receiver_data = get_stored_data[1]
+    weight = get_stored_data[2]
+    barcode_target = get_stored_data[3]
+    number_data = get_stored_data[4]
+    today_date = get_stored_data[5]
+    sender_name = get_stored_data[6]
+    senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
+    receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
+
+    pdf = MyFPDF('L', 'mm', 'letter')
+    pdf.add_page()
+    pdf.set_font('helvetica', '', 14)
+    pdf.set_line_width(0.8)
+    pdf.rect(98.10, 12.95, 154.40, 196.20, style = '')
+    pdf.image("media/images/f.png", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 54.3, 252.45, 54.3)
+    pdf.image("media/images/f2.png", x = 98.70, y = 54.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 69.5, 252.45, 69.5)
+    # pdf.set_xy(98.55, 72)
+    pdf.set_xy(207, 71.5)
+    pdf.cell(50, 5.7, "Ship Date:{}".format(today_date), 0, 1,'L')
+
+    pdf.set_xy(211, 79)
+    pdf.cell(40, 3, "Weight: {} oz".format(weight), 0, 1,'R')
+
+    for index in range(len(senders_info)):
+        for key in senders_info[index]:
+            incre_by_one = index * 5.8
+            incre = 71.5 + incre_by_one
+            pdf.set_xy(99, incre)
+            pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+
+    pdf.set_font('helvetica', '', 14.8)
+    for index in range(len(receivers_info)):
+        for key in receivers_info[index]:
+            incre_by_one = index * 6
+            incre = 119 + incre_by_one
+            pdf.set_xy(118.5, incre)
+            pdf.set_font('helvetica', '', 15.4)
+            pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
+
+    pdf.line(98.55, 151.5, 252.45, 151.5)
+    pdf.set_font('helvetica', 'B', 10.5)  
+    pdf.text(155.4, 158, 'USPS TRACKING #EP')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 162.95, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.set_font('helvetica', 'B', 13.5)  
+    pdf.text(137.5, 196, "{}".format(number_data))
+
+    pdf.line(98.55, 197.10, 252.45, 197.10)
+    pdf.image("media/images/s.jpg", x = 164.35, y = 199, w = 22, h = 8.5, type = '', link = '')
+    pdf.output('{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 # Delete selected express with sig numbers
@@ -898,7 +1135,8 @@ class GetData(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
 
-        return Response('http://127.0.0.1:8000/report')
+        # return Response('http://127.0.0.1:8000/report')
+        return Response('https://texclusive.herokuapp.com/report')
 
         
 
@@ -924,7 +1162,8 @@ class GetDataSig(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
            
-        return Response('http://127.0.0.1:8000/report/sig')
+        # return Response('http://127.0.0.1:8000/report/sig')
+        return Response('https://texclusive.herokuapp.com/report/sig')
 
 
 # Delete selected express with sig numbers
@@ -934,7 +1173,22 @@ class GetDataExp(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
            
-        return Response('http://127.0.0.1:8000/report/exp')
+        # return Response('http://127.0.0.1:8000/report/exp')
+
+        return Response('https://texclusive.herokuapp.com/report/exp')
+
+
+# Delete selected express with sig numbers
+class GetDataFirstClass(APIView):
+    # serializer_class = FileUploadSerializer3
+    def post(self, request, selected=None):
+        incomingData = request.data
+        StoreData.my_store = incomingData
+           
+        # return Response('http://127.0.0.1:8000/report/fc')
+
+        return Response('https://texclusive.herokuapp.com/report/fc')
+
 
 
 
@@ -1035,13 +1289,13 @@ class GetDataExp(APIView):
 #    <table border="0" align="center" width="50%">
 #         <thead>
 #             <tr>
-#                 <th width="100%"><img src="staticfiles/images/1p.jpg"/></th>            
+#                 <th width="100%"><img src="media/images/1p.jpg"/></th>            
 #             </tr>
 #         </thead>
 #         <tbody>
 #         <tbody>
 #             <tr>
-#                 <td><img src="staticfiles/images/p2.png"/></td> 
+#                 <td><img src="media/images/p2.png"/></td> 
 #             </tr>
             
 #         </tbody>

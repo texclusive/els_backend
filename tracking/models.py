@@ -40,17 +40,21 @@ class ExpressWithSigPriorityTracking(models.Model):
 
     def __str__(self):
         return self.express_priority_with_sig
+
+
+class FirstClassTracking(models.Model):
+    first_class = models.CharField(unique=True, blank=False, max_length=26, validators=[MinLengthValidator(26)])
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.first_class
         
 
 class LabelData(models.Model):
     senderData = JSONField()
 
 
-class LabelList(models.Model):
-    mylist = ArrayField(
-        ArrayField(
-            models.CharField(max_length=10, blank=True)
-            )
-    )
+# class LabelList(models.Model):
+#     mylist = ArrayField(ArrayField(models.CharField(max_length=10, blank=True)))
     
 

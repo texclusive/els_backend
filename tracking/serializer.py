@@ -1,6 +1,19 @@
 from rest_framework import serializers
-from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking, ExpressWithSigPriorityTracking, LabelData, LabelList
+from .models import PriorityTracking, User, ExpressPriorityTracking, PriorityWithSigTracking, ExpressWithSigPriorityTracking, LabelData, FirstClassTracking 
 
+
+# user serializer
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'pk'
+        ]
+
+
+# priority serializer
 class PriorityTrackingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriorityTracking
@@ -11,12 +24,12 @@ class PriorityTrackingSerializer(serializers.ModelSerializer):
             # 'user'
         ]
 
+
 class FileUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
 
-   
+
 class SaveFileSerializer(serializers.Serializer):
-    
     class Meta:
         model = PriorityTracking
         fields = [
@@ -25,34 +38,21 @@ class SaveFileSerializer(serializers.Serializer):
             ]
 
 
-class UserListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'username',
-            'email',
-            'pk'
-            
-        ]
-
-
+# express serializer
 class ExpressPriorityTrackingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpressPriorityTracking
         fields = [
             'express_priority',
             'user',
-            
-            # 'user'
         ]
+
 
 class FileUploadSerializer1(serializers.Serializer):
     file = serializers.FileField()
 
 
-
 class SaveFileSerializer1(serializers.Serializer):
-    
     class Meta:
         model = ExpressPriorityTracking
         fields = [
@@ -69,12 +69,11 @@ class SigPriorityTrackingSerializer(serializers.ModelSerializer):
             'priority_with_sig',
             'user',
             'pk'
-            # 'user'
         ]
+     
 
 class FileUploadSerializer2(serializers.Serializer):
     file = serializers.FileField()
-
 
 
 class SaveFileSerializer2(serializers.Serializer):
@@ -94,12 +93,11 @@ class SigExpressTrackingSerializer(serializers.ModelSerializer):
             'express_priority_with_sig',
             'user',
             'pk'
-            # 'user'
         ]
+
 
 class FileUploadSerializer3(serializers.Serializer):
     file = serializers.FileField()
-
 
 
 class SaveFileSerializer3(serializers.Serializer):
@@ -109,6 +107,41 @@ class SaveFileSerializer3(serializers.Serializer):
             'express_priority_with_sig',
             'user'
             ]
+
+
+# first class
+class FirstClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FirstClassTracking
+        fields = [
+            'first_class',
+            'user',
+            'pk'
+            # 'user'
+        ]
+
+
+class FileUploadSerializer4(serializers.Serializer):
+    file = serializers.FileField()
+
+
+class SaveFileSerializer4(serializers.Serializer):
+    class Meta:
+        model = FirstClassTracking
+        fields = [
+            'first_class',
+            'user'     
+        ]
+
+# class PriorityTrackingSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PriorityTracking
+#         fields = [
+#             'priority',
+#             'user',
+#             'pk'
+#             # 'user'
+#         ]
 
 class GeeksSerializer(serializers.Serializer):
     # initialize fields
@@ -121,7 +154,7 @@ class LabelDataSerializer(serializers.ModelSerializer):
             'senderData',
             ]
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LabelList
-        fields = ['mylist']
+# class ProductSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = LabelList
+#         fields = ['mylist']
