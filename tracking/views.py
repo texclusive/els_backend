@@ -1,4 +1,4 @@
-from ast import Store
+# from ast import Store
 import io, csv, pandas as pd
 from django.dispatch import receiver
 from django.shortcuts import render

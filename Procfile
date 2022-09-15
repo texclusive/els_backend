@@ -1,1 +1,1 @@
-web: gunicorn exqship.wsgi 
+web: gunicorn --chdir exqship.wsgi 
