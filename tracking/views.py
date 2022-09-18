@@ -963,9 +963,9 @@ def report_sig(request):
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
   
     # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
-    pdf.output('./files/barcode.pdf', 'F')
+    pdf.output('barcode.pdf', 'F')
 
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_exp_sig(request):
