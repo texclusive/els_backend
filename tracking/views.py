@@ -1202,8 +1202,8 @@ class GetDataSig(APIView):
         file.close()
             
 
-        return Response('http://127.0.0.1:8000/report/sig')
-        # return Response('https://texclusive.herokuapp.com/report/sig')
+        # return Response('http://127.0.0.1:8000/report/sig')
+        return Response('https://texclusive.herokuapp.com/report/sig')
 
 
 # Delete selected express with sig numbers
