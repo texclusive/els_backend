@@ -1,0 +1,7 @@
+{"fullName": "AROWOLO", "address": "BABAJIDE PAUL 28", "city_state_zip": "DGD AD 45321"}
+{"fullName": "SMART LION", "sorted_one": "BABAJIDE PAUL 28", "sorted_two": "DGD AD 45321"}
+"7"
+"42045321(92)243432135353535354673232"
+"2324 3432 1353 5353 5354 6732 32"
+"09/18/22"
+"AROWOLO"

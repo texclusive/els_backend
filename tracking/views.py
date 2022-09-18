@@ -1,5 +1,6 @@
 # from ast import Store
 # import io, csv, pandas as pd
+from webbrowser import get
 import pandas as pd
 from django.dispatch import receiver
 from django.shortcuts import render
@@ -8,6 +9,7 @@ from rest_framework.views import APIView
 # from rest_framework import generics, status, mixins
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
+import json
 # from rest_framework.authtoken.views import ObtainAuthToken
 # from turtle import width
 from .serializer import (
@@ -828,6 +830,7 @@ class StoreData:
 class MyFPDF(FPDF, HTMLMixin):
 	pass
 
+ 
 
 def report(request):
     get_stored_data = StoreData.my_store
@@ -883,22 +886,32 @@ def report(request):
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('{}.pdf'.format(sender_name), 'F')
-    StoreData.my_store = ''
-    print(StoreData.my_store)
-    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('.files/{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('.files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_sig(request):
-    get_stored_data = StoreData.my_store
+    # get_stored_data = StoreData.my_store
+    get_stored_data = []
+
+    with open("sample.txt", 'r') as f:
+        for line in f:
+            get_stored_data.append(line.strip())
+
+    
+    # get_stored_data = get_stored_data.append(content)
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
-    weight = get_stored_data[2]
-    barcode_target = get_stored_data[3]
-    number_data = get_stored_data[4]
-    today_date = get_stored_data[5]
-    sender_name = get_stored_data[6]
-    # print(x)
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    sender_name = get_stored_data[6].replace('"', '')
+    print(sender_name)
+    
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+    
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
 
@@ -949,9 +962,10 @@ def report_sig(request):
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
   
-    pdf.output('{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+    # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    pdf.output('./files/barcode.pdf', 'F')
 
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_exp_sig(request):
@@ -1005,12 +1019,13 @@ def report_exp_sig(request):
     pdf.line(98.55, 153, 252.45, 153)
     pdf.set_font('helvetica', 'B', 12)  
     pdf.text(155.4, 159, 'USPS TRACKING #EP')
-    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('{}.pdf'.format(sender_name), 'F')
+    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
     return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
 
 
@@ -1066,14 +1081,15 @@ def report_exp(request):
     pdf.line(98.55, 153, 252.45, 153)
     pdf.set_font('helvetica', 'B', 12)  
     pdf.text(155.4, 159, 'USPS TRACKING #EP')
-    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
-
+    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+ 
 
 def report_fc(request):
     get_stored_data = StoreData.my_store
@@ -1122,14 +1138,15 @@ def report_fc(request):
     pdf.line(98.55, 151.5, 252.45, 151.5)
     pdf.set_font('helvetica', 'B', 10.5)  
     pdf.text(155.4, 158, 'USPS TRACKING #EP')
-    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 162.95, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 162.95, w = 140.45, h = 26.4, type = '', link = '')
     pdf.set_font('helvetica', 'B', 13.5)  
     pdf.text(137.5, 196, "{}".format(number_data))
 
     pdf.line(98.55, 197.10, 252.45, 197.10)
     pdf.image("media/images/s.jpg", x = 164.35, y = 199, w = 22, h = 8.5, type = '', link = '')
-    pdf.output('{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 # Delete selected express with sig numbers
@@ -1139,8 +1156,8 @@ class GetData(APIView):
         incomingData = request.data
         StoreData.my_store = incomingData
 
-        # return Response('http://127.0.0.1:8000/report')
-        return Response('https://texclusive.herokuapp.com/report')
+        return Response('http://127.0.0.1:8000/report')
+        # return Response('https://texclusive.herokuapp.com/report')
 
         
 
@@ -1164,8 +1181,27 @@ class GetDataSig(APIView):
     # serializer_class = FileUploadSerializer3
     def post(self, request, selected=None):
         incomingData = request.data
-        StoreData.my_store = incomingData
-           
+        # StoreData.my_store = incomingData
+
+        # new_array = np.array(incomingData)
+
+        # # Displaying the array
+
+        # file = open("sample.txt", "w+")
+
+        # # Saving the array in a text file
+        # content = str(new_array)
+        # file.write(content)
+        # file.close()
+
+
+        file = open("sample.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file) 
+            file.write('\n')
+        file.close()
+            
+
         return Response('http://127.0.0.1:8000/report/sig')
         # return Response('https://texclusive.herokuapp.com/report/sig')
 
