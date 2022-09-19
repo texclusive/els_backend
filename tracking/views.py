@@ -908,8 +908,8 @@ def report(request):
     # pdf.output('.files/{}.pdf'.format(sender_name), 'F')
     # return FileResponse(open('.files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
-    pdf.output('./files/barcode.pdf', 'F')
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('barcode.pdf', 'F')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_sig(request):
@@ -987,8 +987,8 @@ def report_sig(request):
     # pdf.output('./files/barcode.pdf', 'F')
 
     # return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
-    pdf.output('./files/barcode.pdf', 'F')
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('barcode.pdf', 'F')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_exp_sig(request):
@@ -1067,8 +1067,8 @@ def report_exp_sig(request):
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
     # return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
-    pdf.output('./files/barcode.pdf', 'F')
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('barcode.pdf', 'F')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 
@@ -1148,8 +1148,8 @@ def report_exp(request):
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
     # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
     # return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
-    pdf.output('./files/barcode.pdf', 'F')
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('barcode.pdf', 'F')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
  
 
 def report_fc(request):
@@ -1226,8 +1226,8 @@ def report_fc(request):
     # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
     # return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
 
-    pdf.output('./files/barcode.pdf', 'F')
-    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('barcode.pdf', 'F')
+    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 # Delete selected express with sig numbers
