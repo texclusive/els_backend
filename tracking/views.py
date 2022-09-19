@@ -833,14 +833,33 @@ class MyFPDF(FPDF, HTMLMixin):
  
 
 def report(request):
-    get_stored_data = StoreData.my_store
+    # get_stored_data = StoreData.my_store
+    # senders_data = get_stored_data[0]
+    # receiver_data = get_stored_data[1]
+    # weight = get_stored_data[2]
+    # barcode_target = get_stored_data[3]
+    # number_data = get_stored_data[4]
+    # today_date = get_stored_data[5]
+    # sender_name = get_stored_data[6]
+
+    get_stored_data = []
+
+    with open("sample.txt", 'r') as f:
+        for line in f:
+            get_stored_data.append(line.strip())
+    
+
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
-    weight = get_stored_data[2]
-    barcode_target = get_stored_data[3]
-    number_data = get_stored_data[4]
-    today_date = get_stored_data[5]
-    sender_name = get_stored_data[6]
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    # sender_name = get_stored_data[6].replace('"', '')
+
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
 
@@ -886,8 +905,11 @@ def report(request):
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('.files/{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('.files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+    # pdf.output('.files/{}.pdf'.format(sender_name), 'F')
+    # return FileResponse(open('.files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+
+    pdf.output('./files/barcode.pdf', 'F')
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_sig(request):
@@ -906,8 +928,7 @@ def report_sig(request):
     barcode_target = get_stored_data[3].replace('"', '')
     number_data = get_stored_data[4].replace('"', '')
     today_date = get_stored_data[5].replace('"', '')
-    sender_name = get_stored_data[6].replace('"', '')
-    print(sender_name)
+    # sender_name = get_stored_data[6].replace('"', '')
     
     senders_data = json.loads(senders_data)
     receiver_data = json.loads(receiver_data)
@@ -963,20 +984,39 @@ def report_sig(request):
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
   
     # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
-    pdf.output('barcode.pdf', 'F')
+    # pdf.output('./files/barcode.pdf', 'F')
 
-    return FileResponse(open('barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    # return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+    pdf.output('./files/barcode.pdf', 'F')
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 def report_exp_sig(request):
-    get_stored_data = StoreData.my_store
+    # get_stored_data = StoreData.my_store
+    # senders_data = get_stored_data[0]
+    # receiver_data = get_stored_data[1]
+    # weight = get_stored_data[2]
+    # barcode_target = get_stored_data[3]
+    # number_data = get_stored_data[4]
+    # today_date = get_stored_data[5]
+    # sender_name = get_stored_data[6]
+    get_stored_data = []
+
+    with open("sample.txt", 'r') as f:
+        for line in f:
+            get_stored_data.append(line.strip())
+
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
-    weight = get_stored_data[2]
-    barcode_target = get_stored_data[3]
-    number_data = get_stored_data[4]
-    today_date = get_stored_data[5]
-    sender_name = get_stored_data[6]
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    # sender_name = get_stored_data[6].replace('"', '')
+
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
 
@@ -1025,20 +1065,39 @@ def report_exp_sig(request):
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+    # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    # return FileResponse(open('{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+    pdf.output('./files/barcode.pdf', 'F')
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 
 def report_exp(request):
-    get_stored_data = StoreData.my_store
+    # get_stored_data = StoreData.my_store
+    # senders_data = get_stored_data[0]
+    # receiver_data = get_stored_data[1]
+    # weight = get_stored_data[2]
+    # barcode_target = get_stored_data[3]
+    # number_data = get_stored_data[4]
+    # today_date = get_stored_data[5]
+    # sender_name = get_stored_data[6]
+    get_stored_data = []
+
+    with open("sample.txt", 'r') as f:
+        for line in f:
+            get_stored_data.append(line.strip())
+
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
-    weight = get_stored_data[2]
-    barcode_target = get_stored_data[3]
-    number_data = get_stored_data[4]
-    today_date = get_stored_data[5]
-    sender_name = get_stored_data[6]
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    # sender_name = get_stored_data[6].replace('"', '')
+
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
 
@@ -1087,19 +1146,38 @@ def report_exp(request):
     pdf.text(137.5, 197, "{}".format(number_data))
     pdf.line(98.55, 198.55, 252.45, 198.55)
     pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+    # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    # return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=False, content_type='application/pdf')
+    pdf.output('./files/barcode.pdf', 'F')
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
  
 
 def report_fc(request):
-    get_stored_data = StoreData.my_store
+    # get_stored_data = StoreData.my_store
+    # senders_data = get_stored_data[0]
+    # receiver_data = get_stored_data[1]
+    # weight = get_stored_data[2]
+    # barcode_target = get_stored_data[3]
+    # number_data = get_stored_data[4]
+    # today_date = get_stored_data[5]
+    # sender_name = get_stored_data[6]
+    get_stored_data = []
+
+    with open("sample.txt", 'r') as f:
+        for line in f:
+            get_stored_data.append(line.strip())
+
     senders_data = get_stored_data[0]
     receiver_data = get_stored_data[1]
-    weight = get_stored_data[2]
-    barcode_target = get_stored_data[3]
-    number_data = get_stored_data[4]
-    today_date = get_stored_data[5]
-    sender_name = get_stored_data[6]
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    # sender_name = get_stored_data[6].replace('"', '')
+
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+
     senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
     receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
 
@@ -1145,8 +1223,11 @@ def report_fc(request):
 
     pdf.line(98.55, 197.10, 252.45, 197.10)
     pdf.image("media/images/s.jpg", x = 164.35, y = 199, w = 22, h = 8.5, type = '', link = '')
-    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
-    return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+    # pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    # return FileResponse(open('./files/{}.pdf'.format(sender_name), 'rb'), as_attachment=True, content_type='application/pdf')
+
+    pdf.output('./files/barcode.pdf', 'F')
+    return FileResponse(open('./files/barcode.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
 
 
 # Delete selected express with sig numbers
@@ -1154,10 +1235,16 @@ class GetData(APIView):
     # serializer_class = FileUploadSerializer3
     def post(self, request, selected=None):
         incomingData = request.data
-        StoreData.my_store = incomingData
+        # StoreData.my_store = incomingData
 
-        return Response('http://127.0.0.1:8000/report')
-        # return Response('https://texclusive.herokuapp.com/report')
+        file = open("sample.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file) 
+            file.write('\n')
+        file.close()
+
+        # return Response('http://127.0.0.1:8000/report')
+        return Response('https://texclusive.herokuapp.com/report')
 
         
 
@@ -1183,17 +1270,6 @@ class GetDataSig(APIView):
         incomingData = request.data
         # StoreData.my_store = incomingData
 
-        # new_array = np.array(incomingData)
-
-        # # Displaying the array
-
-        # file = open("sample.txt", "w+")
-
-        # # Saving the array in a text file
-        # content = str(new_array)
-        # file.write(content)
-        # file.close()
-
 
         file = open("sample.txt", 'w', encoding='utf-8')
         for dic in incomingData:
@@ -1201,7 +1277,6 @@ class GetDataSig(APIView):
             file.write('\n')
         file.close()
             
-
         # return Response('http://127.0.0.1:8000/report/sig')
         return Response('https://texclusive.herokuapp.com/report/sig')
 
@@ -1211,11 +1286,17 @@ class GetDataExp(APIView):
     # serializer_class = FileUploadSerializer3
     def post(self, request, selected=None):
         incomingData = request.data
-        StoreData.my_store = incomingData
-           
-        return Response('http://127.0.0.1:8000/report/exp')
+        # StoreData.my_store = incomingData
 
-        # return Response('https://texclusive.herokuapp.com/report/exp')
+        file = open("sample.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file) 
+            file.write('\n')
+        file.close()
+           
+        # return Response('http://127.0.0.1:8000/report/exp')
+
+        return Response('https://texclusive.herokuapp.com/report/exp')
 
 
 # Delete selected express with sig numbers
@@ -1223,11 +1304,16 @@ class GetDataFirstClass(APIView):
     # serializer_class = FileUploadSerializer3
     def post(self, request, selected=None):
         incomingData = request.data
-        StoreData.my_store = incomingData
-           
-        return Response('http://127.0.0.1:8000/report/fc')
+        # StoreData.my_store = incomingData
 
-        # return Response('https://texclusive.herokuapp.com/report/fc')
+        file = open("sample.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file) 
+            file.write('\n')
+        file.close()
+           
+        # return Response('http://127.0.0.1:8000/report/fc')
+        return Response('https://texclusive.herokuapp.com/report/fc')
 
 
 
