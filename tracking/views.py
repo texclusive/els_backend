@@ -2625,7 +2625,8 @@ class GetDataFirstClass(generics.CreateAPIView):
         user_id = request.user.id
 
         uuid = write_to_file(user_id, incomingData)
-        return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
         # return Response('https://texclusive.herokuapp.com/report/fc')
 
 
@@ -2868,7 +2869,9 @@ class GetDataExpressSig(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
+        
       
         # if request.user.id == 2:
         #     file = open("sheetone.txt", 'w', encoding='utf-8')
@@ -3122,7 +3125,9 @@ class GetDataExp(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
+        # https://texclusive.herokuapp.com
 
         # if request.user.id == 2:
         #     file = open("sheetone.txt", 'w', encoding='utf-8')
@@ -3382,7 +3387,8 @@ class GetDataSig(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
 
 
         # file = open("sample.txt", 'w', encoding='utf-8')
@@ -3716,10 +3722,10 @@ class GetData(generics.CreateAPIView):
         incomingData = request.data
         # StoreData.my_store = incomingData
         user_id = request.user.id
-        print(user_id)
         uuid = write_to_file(user_id, incomingData)
-        print(uuid)
+        # return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
         return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
+     
 
         # file = open("sample.txt", 'w', encoding='utf-8')
         # for dic in incomingData:
@@ -3733,7 +3739,8 @@ class GetData(generics.CreateAPIView):
 
 def download_p(request, id):
     sender = write_p(id)
-    return FileResponse(open('./files/{}.pdf'.format(sender), 'rb'), as_attachment=True, content_type='application/pdf')
+    dir = os.path.join(BASE_DIR, 'files')
+    return FileResponse(open(dir + '/{}.pdf'.format(sender), 'rb'), as_attachment=True, content_type='application/pdf')
     # get_stored_data = StoreData.my_store
     # senders_data = get_stored_data[0]
     # receiver_data = get_stored_data[1]
