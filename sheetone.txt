@@ -1,7 +1,0 @@
-{"fullName": "TONY VO", "address": "1210 S 47TH PL", "city_state_zip": "RENTON WA 98055"}
-{"fullName": "TONY VO", "address": "1210 S 47TH PL", "city_state_zip": "RENTON WA 98055-7324"}
-"2"
-"42098055(92)001901415655028710747026"
-"9200 1901 4156 5502 8710 7470 26"
-"09/20/22"
-"TONY VO"
