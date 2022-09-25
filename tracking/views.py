@@ -3739,8 +3739,8 @@ class GetData(generics.CreateAPIView):
 
 def download_p(request, id):
     sender = write_p(id)
-    dir = os.path.join(BASE_DIR, 'files')
-    return FileResponse(open(dir + '/{}.pdf'.format(sender), 'rb'), as_attachment=True, content_type='application/pdf')
+    # dir = os.path.join(BASE_DIR, 'files')
+    return FileResponse(open('./files/{}.pdf'.format(sender), 'rb'), as_attachment=True, content_type='application/pdf')
     # get_stored_data = StoreData.my_store
     # senders_data = get_stored_data[0]
     # receiver_data = get_stored_data[1]
