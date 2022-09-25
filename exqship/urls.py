@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
+# from backend.src.exqship.tracking.views import download_p
 from tracking.views import (
-    ListPriorityTracking, 
+    ListPriorityTracking,
     DeletePriorityTracking,
-    UploadPriorityTracking, 
-    TrackingCount, 
-    UserList, 
+    UploadPriorityTracking,
+    TrackingCount,
+    UserList,
     DeleteUser,
     ListExpressPriorityTracking,
     DeleteExpressPriorityTracking,
@@ -41,30 +42,35 @@ from tracking.views import (
     GetData,
     GetDataSig,
     GetDataExp,
+    GetDataExpressSig,
     GetDataFirstClass,
-    report,
-    report_sig,
-    report_exp,
-    report_fc
+    download_p,
+    download_ps,
+    download_e,
+    download_es,
+    download_fc,
+    FileCleanUp,
+    download_p46,
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('new/', ListPriorityTracking.as_view(), name='test'),
-    path('delete/item/<str:priority>/', DeletePriorityTracking.as_view(), name='delete-item'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', obtain_auth_token, name='obtain-token'),
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('user-list/', UserList.as_view(), name='user-list'),
+    path('delete/user/<str:username>/', DeletePriorityTracking.as_view(), name='delete-item'),
 
 
     # path('api/token/auth/', CustomAuthToken.as_view(), name="custom-auth"),
-    path('upload/', UploadPriorityTracking.as_view(), name='upload-priority'),
     path('tracking-count/', TrackingCount.as_view(), name='tracking-count'),
-    path('user-list/', UserList.as_view(), name='user-list'),
-    path('delete/user/<str:username>/', DeletePriorityTracking.as_view(), name='delete-item'),
+    path('p/list/', ListPriorityTracking.as_view(), name='test'),
+    path('delete/item/<str:priority>/', DeletePriorityTracking.as_view(), name='delete-item'),
+    path('upload/', UploadPriorityTracking.as_view(), name='upload-priority'),
+   
 
     # express
     path('express-tracking-count/', ExpressTrackingCount.as_view(), name='express-tracking-count'),
@@ -108,18 +114,26 @@ urlpatterns = [
     path('delete/priority/sig/<str:selected>/', DeleteFromPriorityWithSigNumber.as_view(), name='delete-priority-sig'),
     path('delete/all/express/sig', DeleteAllExpressWithSigNumber.as_view(), name='delete-all-express-sig'),
     path('delete/express/sig/<str:selected>/', DeleteFromExpressWithSigNumber.as_view(), name='delete-express-sig'),
-
     path('delete/verified-user/<int:user_id>/', DeleteUser.as_view(), name='user-delete'),  
-    path('report/', report, name='report'),
-    path('report/sig', report_sig, name='reportsig'),
-    path('report/exp', report_exp, name='reportexp'),
-    path('report/fc', report_fc, name='reportfc'),
-    
-    path('datapop/', GetData.as_view(), name='datap'),  
-    path('datapop/sig', GetDataSig.as_view(), name='datapsig'),
-    path('datapop/exp', GetDataExp.as_view(), name='datapex'),
-    path('datapop/fc', GetDataFirstClass.as_view(), name='datafcfc'),
 
 
+    # Dowload links
+    path('download/p/<id>', download_p, name='download_p'),
+    path('download/ps/<id>', download_ps, name='download_ps'),
+    path('download/e/<id>', download_e, name='download_e'),
+    path('download/fc/<id>', download_fc, name='download_fc'),
+    path('download/es/<id>', download_es, name='download_es'),
+
     
+    # Links for getting data from user
+    path('data/p', GetData.as_view(), name='datap'),  
+    path('data/ps', GetDataSig.as_view(), name='dataps'),
+    path('data/e', GetDataExp.as_view(), name='datapex'),
+    path('data/fc', GetDataFirstClass.as_view(), name='datafcfc'),
+    path('data/es', GetDataExpressSig.as_view(), name='dataes'),
+
+    path('remove/store/files', FileCleanUp.as_view(), name='clear-data'), 
+
+    # 4x6 links
+    path('download/test', download_p46, name='clear-data'), 
 ]
