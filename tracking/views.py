@@ -3723,8 +3723,8 @@ class GetData(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        # return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
-        return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
      
 
         # file = open("sample.txt", 'w', encoding='utf-8')
