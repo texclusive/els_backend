@@ -33,8 +33,8 @@ DEBUG = True
 # # for heroku
 # DEBUG = False
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['texclusive.herokuapp.com']
+ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['texclusive.herokuapp.com']
 
 # for heroku
 # ALLOWED_HOSTS = ["*"]

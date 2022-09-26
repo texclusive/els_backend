@@ -3127,8 +3127,7 @@ class GetDataExp(generics.CreateAPIView):
         uuid = write_to_file(user_id, incomingData)
         return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
-        # https://texclusive.herokuapp.com
-
+ 
         # if request.user.id == 2:
         #     file = open("sheetone.txt", 'w', encoding='utf-8')
         #     for dic in incomingData:
@@ -3149,7 +3148,7 @@ class GetDataExp(generics.CreateAPIView):
 
 
 def download_e(request, id):
-    sender = write_ps(id)
+    sender = write_e(id)
     return FileResponse(open('./files/{}.pdf'.format(sender), 'rb'), as_attachment=True, content_type='application/pdf')
     # get_stored_data = StoreData.my_store
     # senders_data = get_stored_data[0]
