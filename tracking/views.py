@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 # from rest_framework import generics, status, mixins
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-import json
+# import json
 # from rest_framework.authtoken.views import ObtainAuthToken
 # from turtle import width
 from .serializer import (
