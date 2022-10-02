@@ -215,8 +215,8 @@ class GetDataFirstClass(generics.CreateAPIView):
         user_id = request.user.id
 
         uuid = write_to_file(user_id, incomingData)
-        return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
-        # return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
      
 
 def download_fc(request, id):
@@ -372,8 +372,8 @@ class GetDataExpressSig(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        # return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
-        return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
         
     
 def download_es(request, id):
@@ -535,8 +535,8 @@ class GetDataExp(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        # return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
-        return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
  
         
 def download_e(request, id):
@@ -687,8 +687,8 @@ class GetDataSig(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        # return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
-        return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
 
 
 def download_ps(request, id):
@@ -849,8 +849,8 @@ class GetData(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        # return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
-        return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
+        return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
+        # return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
      
 
 def download_p(request, id):
