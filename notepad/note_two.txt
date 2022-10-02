@@ -1,7 +1,7 @@
-{"fullName": "LTB ENTERPRISE", "address": "563 W BAY AREA BLVD #269", "city_state_zip": "WEBSTER TX 77598"}
-{"fullName": "LTB ENTERPRISE", "sorted_one": "563 W BAY AREA BLVD #269", "sorted_two": "WEBSTER TX 77598"}
-"5"
-"42077598(92)108902755477000440183721"
-"9210 8902 7554 7700 0440 1837 21"
-"09/26/22"
-"LTB ENTERPRISE"
+{"fullName": "AUSTIN GARDNER", "address": "1002 S MAIN ST ", "city_state_zip": "BUTLER PA 16001"}
+{"fullName": "BRYAN CHOW", "other_info_one": "AUSTIN GARDNER", "other_info_two": "PREVIOUS TOTAL 1090", "address": "19557 27TH AVE NW", "city_state_zip": "SHORELINE WA 98177-2954"}
+"4"
+"42098177(92)001901415655028710740003"
+"9200 1901 4156 5502 8710 7400 03"
+"10/01/22"
+"AUSTIN GARDNER"
