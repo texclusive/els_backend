@@ -20,6 +20,7 @@ from .serializer import (
     FileUploadSerializer2, 
     FileUploadSerializer3, 
     FileUploadSerializer4,
+    BulkFileUploadSerializer,
     UserListSerializer, 
     ExpressPriorityTrackingSerializer, 
     SigPriorityTrackingSerializer, 
@@ -145,10 +146,16 @@ class UploadFirstClassTracking(generics.CreateAPIView):
 
 # Delete all first class numbers
 class DeleteAllFirstClassNumber(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
     def delete(self, request, *args, **kwargs):
-        # incomplete....filter deletion by user
-        qs = FirstClassTracking.objects.all()
-        qs.delete()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = FirstClassTracking.objects.filter(user_id=ss.user.pk)
+                qs.delete()
         return Response('You have sucessfully deleted all fc numbers')
 
 
@@ -215,8 +222,8 @@ class GetDataFirstClass(generics.CreateAPIView):
         user_id = request.user.id
 
         uuid = write_to_file(user_id, incomingData)
-        # return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
-        return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
+        # return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
      
 
 def download_fc(request, id):
@@ -268,8 +275,10 @@ class UploadSigExpressPriorityTracking(generics.CreateAPIView):
                 requested_user = ss.user
                 
         serializer = self.get_serializer(data=request.data)
+        print(serializer, 'serializer')
         serializer.is_valid(raise_exception=True)
         file = serializer.validated_data['file']
+         
    
         if not file.name.endswith('.csv'):
             return Response({"status": "unsupported file"}, status.HTTP_406_NOT_ACCEPTABLE) 
@@ -303,9 +312,16 @@ class UploadSigExpressPriorityTracking(generics.CreateAPIView):
 
 # Delete all express with sig numbers
 class DeleteAllExpressWithSigNumber(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
     def delete(self, request, *args, **kwargs):
-        qs = ExpressWithSigPriorityTracking.objects.all()
-        qs.delete()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = ExpressWithSigPriorityTracking.objects.filter(user_id=ss.user.pk)
+                qs.delete()
         return Response('You have sucessfully deleted all express with sig numbers')
 
 
@@ -372,8 +388,8 @@ class GetDataExpressSig(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
+        # return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
         
     
 def download_es(request, id):
@@ -460,10 +476,16 @@ class UploadExpressPriorityTracking(generics.CreateAPIView):
 
 #Delete all express numbers
 class DeleteAllPriorityExpressNumber(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
     def delete(self, request, *args, **kwargs):
-        qs = ExpressPriorityTracking.objects.all()
-        # qs.delete()
-        print(qs)
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = ExpressPriorityTracking.objects.filter(user_id=ss.user.pk)
+                qs.delete()       
         return Response('You have sucessfully deleted all express numbers')
 
 
@@ -535,8 +557,8 @@ class GetDataExp(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
+        # return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
  
         
 def download_e(request, id):
@@ -614,9 +636,16 @@ class UploadSigPriorityTracking(generics.CreateAPIView):
 
 # Delete all priority with sig numbers
 class DeleteAllPriorityWithSigNumber(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
     def delete(self, request, *args, **kwargs):
-        qs = PriorityWithSigTracking.objects.all()
-        qs.delete()
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = PriorityWithSigTracking.objects.filter(user_id=ss.user.pk)
+                qs.delete()
         return Response('You have sucessfully deleted all priority with sig numbers')
 
 
@@ -687,8 +716,8 @@ class GetDataSig(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
+        # return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
 
 
 def download_ps(request, id):
@@ -810,10 +839,17 @@ class ListPriorityTracking(APIView):
 
 #Delete all priority numbers
 class DeleteAllPriorityNumber(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
+
     def delete(self, request, *args, **kwargs):
-        qs = PriorityTracking.objects.all()
-        qs.delete()
-        return Response('You have sucessfully deleted all numbers now now')
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                qs = PriorityTracking.objects.filter(user_id=ss.user.pk)
+                qs.delete()
+        return Response('You have sucessfully deleted all numbers')
 
 
 # Delete selected priority numbers
@@ -849,8 +885,8 @@ class GetData(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
+        # return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
      
 
 def download_p(request, id):
@@ -992,9 +1028,9 @@ def download_p46(request):
     # pdf.line(98.55, 153, 252.45, 153)
     # pdf.set_font('helvetica', 'B', 12)  
     # pdf.text(155.4, 159, 'USPS TRACKING #EP')
-    # # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=12.2&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
-    # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
-    # # pdf.image("http://free-barcode.com/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # # pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=12.2&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    # # pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=4.72&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
     # pdf.set_font('helvetica', 'B', 13.5)  
     # pdf.text(137.5, 197, "{}".format(number_data))
     # pdf.line(98.55, 198.55, 252.45, 198.55)
@@ -1002,6 +1038,51 @@ def download_p46(request):
     pdf.output('barcode.pdf', 'F')
     return FileResponse(open('barcode.pdf', 'rb'), as_attachment=False, content_type='application/pdf')
            
+
+
+class UploadPriorityBulk(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = BulkFileUploadSerializer
+   
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        file = serializer.validated_data['file']
+
+        if not file.name.endswith('.xlsx'):
+            return Response({"status": "unsupported file"}, status.HTTP_406_NOT_ACCEPTABLE) 
+        reader = pd.read_excel(file, usecols=['TO', 'LABELS', 'WEIGHT'])
+        # print('Excel Sheet to JSON:', reader.to_json(orient='records'))
+        json_output = reader.to_dict(orient='records')
+        return Response({"result": json_output}, status.HTTP_201_CREATED)
+        
+        
+        
+        # for _, row in reader.iterrows():
+        #     new_file = PriorityTracking(
+        #                priority = row[0],
+        #             #    priority = row['priority'],
+        #                user = requested_user
+        #                )
+        #     mydata.append(new_file)
+        #     if len(new_file.priority) < 26:
+        #         return Response({"status": "forbidden",
+        #                         "incomplete_number": f"{new_file.priority}"}, status.HTTP_403_FORBIDDEN)
+
+        # for number in mydata:
+        #     if PriorityTracking.objects.filter(priority=number.priority).exists():
+        #         return Response({"existed_number": number.priority})
+
+        # try:
+        #     # new_file.save()
+        #     PriorityTracking.objects.bulk_create(mydata)
+        #     return Response({"success": "success"}, status.HTTP_201_CREATED)
+        # except IntegrityError as e:
+        #     if 'UNIQUE constraint' in str(e.args):
+        #         return Response({"status": "duplicate found"}, status.HTTP_403_FORBIDDEN)
+                    
+        # return Response({"status": "success"}, status.HTTP_201_CREATED)
 
 # Notes
 

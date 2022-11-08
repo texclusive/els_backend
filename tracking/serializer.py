@@ -154,6 +154,9 @@ class LabelDataSerializer(serializers.ModelSerializer):
             'senderData',
             ]
 
+class BulkFileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
 # class ProductSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = LabelList

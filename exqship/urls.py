@@ -51,18 +51,22 @@ from tracking.views import (
     download_fc,
     FileCleanUp,
     download_p46,
+    UploadPriorityBulk,
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
+    
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', obtain_auth_token, name='obtain-token'),
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    # path('rest-auth/password/change/', include('rest_auth.urls')),
     path('user-list/', UserList.as_view(), name='user-list'),
-    path('delete/user/<str:username>/', DeletePriorityTracking.as_view(), name='delete-item'),
+    # path('delete/user/<str:username>/', DeletePriorityTracking.as_view(), name='delete-item'),
+    path('pbulk/', UploadPriorityBulk.as_view(), name='upload-bulk'),
 
 
     # path('api/token/auth/', CustomAuthToken.as_view(), name="custom-auth"),
