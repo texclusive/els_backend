@@ -128,23 +128,23 @@ WSGI_APPLICATION = 'exqship.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': str(BASE_DIR / 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db127mlsblliao',
-        'USER': 'sytbediwfrrosq',
-        'PASSWORD': '85227044e4061f2d3d7b6e17534b179fde94413b62fc1b84c0d5b36884f85adb',
-        'HOST': 'ec2-3-93-206-109.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'db127mlsblliao',
+#         'USER': 'sytbediwfrrosq',
+#         'PASSWORD': '85227044e4061f2d3d7b6e17534b179fde94413b62fc1b84c0d5b36884f85adb',
+#         'HOST': 'ec2-3-93-206-109.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

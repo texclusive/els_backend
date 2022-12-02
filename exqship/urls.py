@@ -44,6 +44,7 @@ from tracking.views import (
     GetDataExp,
     GetDataExpressSig,
     GetDataFirstClass,
+    GetDataBulk,
     download_p,
     download_ps,
     download_e,
@@ -52,6 +53,7 @@ from tracking.views import (
     FileCleanUp,
     download_p46,
     UploadPriorityBulk,
+
     )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -135,6 +137,9 @@ urlpatterns = [
     path('data/e', GetDataExp.as_view(), name='datapex'),
     path('data/fc', GetDataFirstClass.as_view(), name='datafcfc'),
     path('data/es', GetDataExpressSig.as_view(), name='dataes'),
+    path('data/bp', GetDataBulk.as_view(), name='databp'),
+
+ 
 
     path('remove/store/files', FileCleanUp.as_view(), name='clear-data'), 
 

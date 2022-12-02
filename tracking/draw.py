@@ -317,3 +317,63 @@ def draw_p(stored_data):
     pdf.output('./files/{}.pdf'.format(sender_name), 'F')
     return sender_name
 
+
+def draw_bp(stored_data):
+    get_stored_data = stored_data
+    senders_data = get_stored_data[0]
+    receiver_data = get_stored_data[1]
+    weight = get_stored_data[2].replace('"', '')
+    barcode_target = get_stored_data[3].replace('"', '')
+    number_data = get_stored_data[4].replace('"', '')
+    today_date = get_stored_data[5].replace('"', '')
+    sender_name = get_stored_data[6].replace('"', '')
+
+    senders_data = json.loads(senders_data)
+    receiver_data = json.loads(receiver_data)
+
+    senders_info =list(map(lambda x:{x[0]:x[1]},senders_data.items() ))
+    receivers_info =list(map(lambda x:{x[0]:x[1]},receiver_data.items() ))
+
+    pdf = MyFPDF('L', 'mm', 'letter')
+    pdf.add_page()
+    pdf.set_font('helvetica', '', 15)
+    pdf.set_line_width(0.8)
+    pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
+    pdf.image("media/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 55.3, 252.45, 55.3)
+    pdf.image("media/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
+    pdf.line(98.55, 70.5, 252.45, 70.5)
+    pdf.set_xy(98.55, 73)
+    pdf.set_xy(204.5, 72.5)
+    pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
+
+    pdf.set_xy(212, 80)
+    pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
+    
+    for index in range(len(senders_info)):
+        for key in senders_info[index]: 
+            incre_by_one = index * 6
+            incre = 73 + incre_by_one
+            pdf.set_xy(99, incre)
+            pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+
+    for index in range(len(receivers_info)):
+        for key in receivers_info[index]:
+            incre_by_one = index * 6
+            incre = 119.5 + incre_by_one
+            pdf.set_xy(118.5, incre)
+            pdf.set_font('helvetica', '', 14.8)
+            pdf.cell(100, 6, f"{receivers_info[index][key].ljust(30)}", 0, 1, align='L')
+
+    pdf.line(98.55, 153, 252.45, 153)
+    pdf.set_font('helvetica', 'B', 12)  
+    pdf.text(155.4, 159, 'USPS TRACKING #EP')
+    pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+    pdf.set_font('helvetica', 'B', 13.5)  
+    pdf.text(137.5, 197, "{}".format(number_data))
+    pdf.line(98.55, 198.55, 252.45, 198.55)
+    pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+    pdf.output('./files/{}.pdf'.format(sender_name), 'F')
+    return sender_name
+
+
