@@ -62,9 +62,9 @@ from django.shortcuts import render
 
 # Pagination Class
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 50
+    page_size = 100
     page_size_query_param = 'page_size'
-    max_page_size = 50
+    max_page_size = 100
 
 
 class StoreData:
@@ -75,6 +75,7 @@ class StoreData:
 
     def show(self):
         print(f"{self.x}")
+
 
 class MyFPDF(FPDF, HTMLMixin):
 	pass
@@ -224,7 +225,8 @@ class GetDataFirstClass(generics.CreateAPIView):
 
         uuid = write_to_file(user_id, incomingData)
         # return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
-        return Response('https://texclusive.herokuapp.com/download/fc/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/fc/{}'.format(uuid))
+        
      
 
 def download_fc(request, id):
@@ -389,7 +391,7 @@ class GetDataExpressSig(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/es/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/es/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
         
     
@@ -558,7 +560,7 @@ class GetDataExp(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/e/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/e/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
  
         
@@ -717,7 +719,7 @@ class GetDataSig(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/ps/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/ps/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
 
 
@@ -886,7 +888,7 @@ class GetData(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
      
 
@@ -1146,16 +1148,13 @@ class GetDataBulk(generics.CreateAPIView):
     # return FileResponse(open('barcode.pdf', 'rb'), as_attachment=False, content_type='application/pdf')
 
 
-    
-
-
         
         # print(senders_data)
                 
         # sender_name = draw_p(get_stored_data)
         
 
-        return Response('https://texclusive.herokuapp.com/download/p/{}'.format(uuid))
+        return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
         # return Response('http://127.0.0.1:8000/download/bp/{}'.format(uuid))       
         
         
