@@ -53,6 +53,8 @@ from tracking.views import (
     FileCleanUp,
     download_p46,
     UploadPriorityBulk,
+    DownloadPBulk,
+    DownloadPPbulk
 
     )
 from rest_framework.authtoken.views import obtain_auth_token
@@ -68,7 +70,11 @@ urlpatterns = [
     # path('rest-auth/password/change/', include('rest_auth.urls')),
     path('user-list/', UserList.as_view(), name='user-list'),
     # path('delete/user/<str:username>/', DeletePriorityTracking.as_view(), name='delete-item'),
+
+
     path('pbulk/', UploadPriorityBulk.as_view(), name='upload-bulk'),
+    path('download/pbulk/', DownloadPBulk.as_view(), name='download-pbulk'),
+    path('download/pbulk/p/<id>', DownloadPPbulk.as_view(), name='download-p-bulk'),
 
 
     # path('api/token/auth/', CustomAuthToken.as_view(), name="custom-auth"),
@@ -77,7 +83,7 @@ urlpatterns = [
     path('delete/item/<str:priority>/', DeletePriorityTracking.as_view(), name='delete-item'),
     path('upload/', UploadPriorityTracking.as_view(), name='upload-priority'),
    
-
+   
     # express
     path('express-tracking-count/', ExpressTrackingCount.as_view(), name='express-tracking-count'),
     path('express-tracking-list/', ListExpressPriorityTracking.as_view(), name='express-tracking-list'),

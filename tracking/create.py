@@ -75,6 +75,69 @@ def write_fc(id):
         sender_name = draw_fc(get_stored_data)
         return sender_name
 
+    elif id == '2fe6c32e-9eb5-4c88-ae05-e7d41725d562':
+        get_stored_data = []
+        with open(dir + "/note_eight.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == 'a15219a4-735c-4990-af86-f3eccae97d93':
+        get_stored_data = []
+        with open(dir + "/note_nine.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == '52688593-9479-4b38-a8ae-3aeff96df687':
+        get_stored_data = []
+        with open(dir + "/note_ten.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == '55582345-9da5-4eb8-9dc9-5f03fdea0dda':
+        get_stored_data = []
+        with open(dir + "/note_eleven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == '15f22fd9-173f-4c55-a026-6e5bab8d0c3c':
+        get_stored_data = []
+        with open(dir + "/note_twelve.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == '2db2f956-9ccd-46b8-90af-56ed54dc4328':
+        get_stored_data = []
+        with open(dir + "/note_thirteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
+    elif id == 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7':
+        get_stored_data = []
+        with open(dir + "/note_fourteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_fc(get_stored_data)
+        return sender_name
+
 
 def write_es(id):
     dir = os.path.join(BASE_DIR, 'notepad')
@@ -136,6 +199,69 @@ def write_es(id):
     elif id == '44816688-342b-4fc1-a4c8-6ffa196b8122':
         get_stored_data = []
         with open(dir + "/note_seven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == '2fe6c32e-9eb5-4c88-ae05-e7d41725d562':
+        get_stored_data = []
+        with open(dir + "/note_eight.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == 'a15219a4-735c-4990-af86-f3eccae97d93':
+        get_stored_data = []
+        with open(dir + "/note_nine.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == '52688593-9479-4b38-a8ae-3aeff96df687':
+        get_stored_data = []
+        with open(dir + "/note_ten.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == '55582345-9da5-4eb8-9dc9-5f03fdea0dda':
+        get_stored_data = []
+        with open(dir + "/note_eleven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == '15f22fd9-173f-4c55-a026-6e5bab8d0c3c':
+        get_stored_data = []
+        with open(dir + "/note_twelve.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == '2db2f956-9ccd-46b8-90af-56ed54dc4328':
+        get_stored_data = []
+        with open(dir + "/note_thirteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_es(get_stored_data)
+        return sender_name
+
+    elif id == 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7':
+        get_stored_data = []
+        with open(dir + "/note_fourteen.txt", 'r') as f:
             for line in f:
                 get_stored_data.append(line.strip())
 
@@ -210,6 +336,76 @@ def write_e(id):
         sender_name = draw_e(get_stored_data)
         return sender_name
 
+    elif id == '2fe6c32e-9eb5-4c88-ae05-e7d41725d562':
+        get_stored_data = []
+
+        with open(dir + "/note_eight.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == 'a15219a4-735c-4990-af86-f3eccae97d93':
+        get_stored_data = []
+
+        with open(dir + "/note_nine.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == '52688593-9479-4b38-a8ae-3aeff96df687':
+        get_stored_data = []
+
+        with open(dir + "/note_ten.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == '55582345-9da5-4eb8-9dc9-5f03fdea0dda':
+        get_stored_data = []
+
+        with open(dir + "/note_eleven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == '15f22fd9-173f-4c55-a026-6e5bab8d0c3c':
+        get_stored_data = []
+
+        with open(dir + "/note_twelve.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == '2db2f956-9ccd-46b8-90af-56ed54dc4328':
+        get_stored_data = []
+
+        with open(dir + "/note_thirteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
+    elif id == 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7':
+        get_stored_data = []
+
+        with open(dir + "/note_fourteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_e(get_stored_data)
+        return sender_name
+
 
 def write_ps(id):
     dir = os.path.join(BASE_DIR, 'notepad')
@@ -277,6 +473,70 @@ def write_ps(id):
 
         sender_name = draw_ps(get_stored_data)
         return sender_name
+
+    elif id == '2fe6c32e-9eb5-4c88-ae05-e7d41725d562':
+        get_stored_data = []
+        with open(dir + "/note_eight.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == 'a15219a4-735c-4990-af86-f3eccae97d93':
+        get_stored_data = []
+        with open(dir + "/note_nine.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == '52688593-9479-4b38-a8ae-3aeff96df687':
+        get_stored_data = []
+        with open(dir + "/note_ten.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == '55582345-9da5-4eb8-9dc9-5f03fdea0dda':
+        get_stored_data = []
+        with open(dir + "/note_eleven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == '15f22fd9-173f-4c55-a026-6e5bab8d0c3c':
+        get_stored_data = []
+        with open(dir + "/note_twelve.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == '2db2f956-9ccd-46b8-90af-56ed54dc4328':
+        get_stored_data = []
+        with open(dir + "/note_thirteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
+    elif id == 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7':
+        get_stored_data = []
+        with open(dir + "/note_fourteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_ps(get_stored_data)
+        return sender_name
+
 
 
 def write_p(id):
@@ -346,6 +606,76 @@ def write_p(id):
         get_stored_data = []
 
         with open(dir + "/note_seven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == '2fe6c32e-9eb5-4c88-ae05-e7d41725d562':
+        get_stored_data = []
+
+        with open(dir + "/note_eight.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == 'a15219a4-735c-4990-af86-f3eccae97d93':
+        get_stored_data = []
+
+        with open(dir + "/note_nine.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == '52688593-9479-4b38-a8ae-3aeff96df687':
+        get_stored_data = []
+
+        with open(dir + "/note_ten.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == '55582345-9da5-4eb8-9dc9-5f03fdea0dda':
+        get_stored_data = []
+
+        with open(dir + "/note_eleven.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == '15f22fd9-173f-4c55-a026-6e5bab8d0c3c':
+        get_stored_data = []
+
+        with open(dir + "/note_twelve.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == '2db2f956-9ccd-46b8-90af-56ed54dc4328':
+        get_stored_data = []
+
+        with open(dir + "/note_thirteen.txt", 'r') as f:
+            for line in f:
+                get_stored_data.append(line.strip())
+
+        sender_name = draw_p(get_stored_data)
+        return sender_name
+
+    elif id == 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7':
+        get_stored_data = []
+
+        with open(dir + "/note_fourteen.txt", 'r') as f:
             for line in f:
                 get_stored_data.append(line.strip())
 

@@ -137,3 +137,66 @@ def write_to_bulkfile(user_id, incomingData):
         file.close()
         return user_id
 
+    elif user_id == 8:
+        user_id = '2fe6c32e-9eb5-4c88-ae05-e7d41725d562'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 9:
+        user_id = 'a15219a4-735c-4990-af86-f3eccae97d93'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 10:
+        user_id = '52688593-9479-4b38-a8ae-3aeff96df687'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 11:
+        user_id = '55582345-9da5-4eb8-9dc9-5f03fdea0dda'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 12:
+        user_id = '15f22fd9-173f-4c55-a026-6e5bab8d0c3c'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 13:
+        user_id = '2db2f956-9ccd-46b8-90af-56ed54dc4328'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+
+    elif user_id == 14:
+        user_id = 'dfdbb5d1-7b1d-4fe0-adb1-d697e11b02a7'
+        file = open(dir + "/note_seven.txt", 'w', encoding='utf-8')
+        for dic in incomingData:
+            json.dump(dic, file)
+            file.write('\n')
+        file.close()
+        return user_id
+

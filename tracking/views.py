@@ -58,6 +58,7 @@ from tracking.create import (
     )
 from tracking.write import write_to_file, write_to_bulkfile
 from django.shortcuts import render
+from PyPDF2 import PdfMerger, PdfFileReader
 
 
 # Pagination Class
@@ -224,8 +225,8 @@ class GetDataFirstClass(generics.CreateAPIView):
         user_id = request.user.id
 
         uuid = write_to_file(user_id, incomingData)
-        # return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
-        return Response('https://good-speed.herokuapp.com/download/fc/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/fc/{}'.format(uuid))
+        # return Response('https://good-speed.herokuapp.com/download/fc/{}'.format(uuid))
         
      
 
@@ -381,7 +382,7 @@ class DeleteSigExpressPriorityTracking(APIView):
             raise ParseError('number has been used')
 
 
-#Get data for express with sig  
+# Get data for express with sig  
 class GetDataExpressSig(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -391,8 +392,8 @@ class GetDataExpressSig(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://good-speed.herokuapp.com/download/es/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
+        # return Response('https://good-speed.herokuapp.com/download/es/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/es/{}'.format(uuid))
         
     
 def download_es(request, id):
@@ -560,8 +561,8 @@ class GetDataExp(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://good-speed.herokuapp.com/download/e/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
+        # return Response('https://good-speed.herokuapp.com/download/e/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/e/{}'.format(uuid))
  
         
 def download_e(request, id):
@@ -719,8 +720,8 @@ class GetDataSig(generics.CreateAPIView):
         user_id = request.user.id
         # StoreData.my_store = incomingData
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://good-speed.herokuapp.com/download/ps/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
+        # return Response('https://good-speed.herokuapp.com/download/ps/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/ps/{}'.format(uuid))
 
 
 def download_ps(request, id):
@@ -888,8 +889,8 @@ class GetData(generics.CreateAPIView):
         # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_file(user_id, incomingData)
-        return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
+        # return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/p/{}'.format(uuid))
      
 
 def download_p(request, id):
@@ -1064,6 +1065,11 @@ class UploadPriorityBulk(generics.CreateAPIView):
         return Response({"result": json_output}, status.HTTP_201_CREATED)
 
 
+def testing():
+  mydata = PriorityWithSigTracking.objects.first()
+  return mydata
+
+
 # Get data to be proceessed by user
 class GetDataBulk(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
@@ -1072,14 +1078,22 @@ class GetDataBulk(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         dir = os.path.join(BASE_DIR, 'bulkpad')
         get_stored_data = []
-        
+        userData = ''
+        merger = PdfMerger()
+
+        # #Define the path to the folder with the PDF files
+        path_to_files = os.path.join(BASE_DIR, 'files')
+
+        # get user id
+        for user in User.objects.all():
+            ss, token = Token.objects.get_or_create(user=user)
+            if ss.user.pk == request.user.id:
+                userData = ss.user.pk
+
+        #get incoming data
         incomingData = request.data
-        # print(incomingData)
-        # StoreData.my_store = incomingData
         user_id = request.user.id
         uuid = write_to_bulkfile(user_id, incomingData)
-
-       
 
         with open(dir + "/bulk_two.txt", 'r') as f:
             for line in f:
@@ -1087,8 +1101,11 @@ class GetDataBulk(generics.CreateAPIView):
         
         senders_data = get_stored_data[0]
         receiver_data = get_stored_data[1]
-        
-        # today_date = get_stored_data[2].replace('"', '')
+        weight = get_stored_data[2].replace('"', '')
+        today_date = get_stored_data[3].replace('"', '')
+        # sender_name = get_stored_data[4].replace('"', '')
+        sender_name = get_stored_data[4].replace('"', '').split()
+        pdf_name = '_'.join(sender_name)
         
         senders_data = json.loads(senders_data)
         receiver_data = json.loads(receiver_data)
@@ -1096,68 +1113,123 @@ class GetDataBulk(generics.CreateAPIView):
 
         # for receiver in receiver_data:
         for i in range(len(receiver_data)):
-            # count = 0
-            for key in receiver_data[i]:
-                print(receiver_data[i])
+            count = 0
 
-            # pdf = MyFPDF('L', 'mm', 'letter')
-            # pdf.add_page()
-            # pdf.set_font('helvetica', '', 15)
-            # pdf.set_line_width(0.8)
-            # pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
-            # pdf.image("media/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
-            # pdf.line(98.55, 55.3, 252.45, 55.3)
-            # pdf.image("media/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
-            # pdf.line(98.55, 70.5, 252.45, 70.5)
-            # pdf.set_xy(98.55, 73)
-            # pdf.set_xy(204.5, 72.5)
-            # # pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
+            pdf = MyFPDF('L', 'mm', 'letter')
+            pdf.add_page()
+            pdf.set_font('helvetica', '', 15)
+            pdf.set_line_width(0.8)
+            pdf.rect(98.10, 12.95, 154.40, 197.5, style = '')
+            pdf.image("media/images/1p.jpg", x = 98.70, y = 13.60, w = 153.20, h = 0, type = '', link = '')
+            pdf.line(98.55, 55.3, 252.45, 55.3)
+            pdf.image("media/images/p2.png", x = 98.70, y = 55.75, w = 153.20, h = 0, type = '', link = '')
+            pdf.line(98.55, 70.5, 252.45, 70.5)
+            pdf.set_xy(98.55, 73)
+            pdf.set_xy(204.5, 72.5)
+            pdf.cell(50, 6, "Ship Date:{}".format(today_date), 0, 1,'L')
 
-            # pdf.set_xy(212, 80)
-            # # pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
+            pdf.set_xy(212, 80)
+            pdf.cell(40, 3, "Weight: {} lb".format(weight), 0, 1,'R')
             
-            # for index in range(len(senders_info)):
-            #     for key in senders_info[index]: 
-            #         incre_by_one = index * 6
-            #         incre = 73 + incre_by_one
-            #         pdf.set_xy(99, incre)
-            #         pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
+            for index in range(len(senders_info)):
+                for key in senders_info[index]: 
+                    incre_by_one = index * 6
+                    incre = 73 + incre_by_one
+                    pdf.set_xy(99, incre)
+                    pdf.cell(170, 6, f"{senders_info[index][key].ljust(30)}", 0, 1,'L')
 
                 
+            for key in receiver_data[i]:
+                    count = count + 1
+                    cityStateZip = receiver_data[i]['cityStateZip']
+                    
+                    incre_by_one = count * 6
+                    incre = 115.5 + incre_by_one
+                    pdf.set_xy(118.5, incre)
+                    pdf.set_font('helvetica', '', 14.8)
+                    pdf.cell(100, 6, f"{receiver_data[i][key]}", 0, 1, align='L')
 
-            # for key in receiver_data[i]:
-            #         count = count + 1
-            #         incre_by_one = count * 6
-            #         incre = 119.5 + incre_by_one
-            #         pdf.set_xy(118.5, incre)
-            #         pdf.set_font('helvetica', '', 14.8)
-            #         pdf.cell(100, 6, f"{receiver_data[i][key]}", 0, 1, align='L')
+            splitCityStateZip = list(cityStateZip.split(" "))
+            lengthSplitCityStateZip = len(splitCityStateZip)
+            zip = splitCityStateZip[lengthSplitCityStateZip-1][:5]
+            mydata = PriorityTracking.objects.filter(user_id=userData).first()
+            number = str(mydata)
+            remNumber = str(mydata)[2:]
+            my_list = [number[idx:idx + 4] for idx in range(0, len(number), 4)]
+            barcode_target = '420' + zip + '(92)' + remNumber
+            number_data = ' '.join(my_list)
 
+                  
+            pdf.line(98.55, 153, 252.45, 153)
+            pdf.set_font('helvetica', 'B', 12)  
+            pdf.text(155.4, 159, 'USPS TRACKING #EP')
+            # pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1".format(barcode_target), x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
+            pdf.set_font('helvetica', 'B', 13.5)  
+            pdf.text(137.5, 197, "{}".format(number_data))
+            pdf.line(98.55, 198.55, 252.45, 198.55)
+            pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
+            pdf.output('./files/{}.pdf'.format(i), 'F')
+            # mydata.delete()
 
-            # pdf.line(98.55, 153, 252.45, 153)
-            # pdf.set_font('helvetica', 'B', 12)  
-            # pdf.text(155.4, 159, 'USPS TRACKING #EP')
-            # pdf.image("http://barcode.design/barcode.asp?bc1={}&bc2=12&bc3=5.1&bc4=1.3&bc5=0&bc6=1&bc7=Arial&bc8=14&bc9=1", x = 105.85, y = 164.2, w = 140.45, h = 26.4, type = '', link = '')
-            # pdf.set_font('helvetica', 'B', 13.5)  
-            # # pdf.text(137.5, 197, "{}".format(number_data))
-            # pdf.line(98.55, 198.55, 252.45, 198.55)
-            # pdf.image("media/images/s.jpg", x = 164.35, y = 200.5, w = 22, h = 8, type = '', link = '')
-            # pdf.output('./files/{}.pdf'.format(i), 'F')
-            # pdf.output('./files/{}.pdf'.format(index), 'F')
-            # pdf.output('barcode.pdf', 'F')
-    # return FileResponse(open('barcode.pdf', 'rb'), as_attachment=False, content_type='application/pdf')
-
-
+        for filename in os.listdir(path_to_files):
+            pdf_file_path = os.path.join(path_to_files, filename)
+            merger.append(pdf_file_path)
         
-        # print(senders_data)
-                
-        # sender_name = draw_p(get_stored_data)
+        merger.write('./b_files/{}.pdf'.format(pdf_name))
+        merger.close()
+
+        # return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
+        return Response('http://127.0.0.1:8000/download/pbulk/p/{}'.format(pdf_name)) 
+
+
+class DownloadPBulk(generics.CreateAPIView): 
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        #Create an instance of PdfFileMerger() class
+        merger = PdfMerger()
+
+        # #Define the path to the folder with the PDF files
+        path_to_files = os.path.join(BASE_DIR, 'files')
+
+        for filename in os.listdir(path_to_files):
+            # print(filename)
+            f = os.path.join(path_to_files, filename)
+    #         # checking if it is a file
+            merger.append(f)
+        
+        merger.write("merged_2_pages.pdf")
+        merger.close()
+
+        return Response('http://127.0.0.1:8000/download/bpulk/') 
         
 
-        return Response('https://good-speed.herokuapp.com/download/p/{}'.format(uuid))
-        # return Response('http://127.0.0.1:8000/download/bp/{}'.format(uuid))       
-        
-        
+
+class DownloadPPbulk(APIView):
+
+    def get(self, request, id=None):
+        # return render(request, 'error.html')
+        print(id)
+        return FileResponse(open('./b_files/{}.pdf'.format(id), 'rb'), as_attachment=True, content_type='application/pdf')
+
+
+# def download_pbulk(request, id):
+#         print("yes")
+#         print(id)
+#         return render(request, 'error.html')
+#         # return FileResponse(open('./b_files/JUSTIN_THANH_HERNANDEZ.pdf', 'rb'), as_attachment=True, content_type='application/pdf')
+  
+
+
+
+
+
+
+
+
+
+
         # for _, row in reader.iterrows():
         #     new_file = PriorityTracking(
         #                priority = row[0],

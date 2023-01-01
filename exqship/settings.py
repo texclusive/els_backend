@@ -128,23 +128,23 @@ WSGI_APPLICATION = 'exqship.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': str(BASE_DIR / 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd7q77rn7d6no13',
-        'USER': 'bzbnttqwbsltdi',
-        'PASSWORD': '7cc4d098b3ccfaa1e5a80cef52d43fc619253a7dbab8f446b55f0f5b7cb87aea',
-        'HOST': 'ec2-44-205-41-76.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd7q77rn7d6no13',
+#         'USER': 'bzbnttqwbsltdi',
+#         'PASSWORD': '7cc4d098b3ccfaa1e5a80cef52d43fc619253a7dbab8f446b55f0f5b7cb87aea',
+#         'HOST': 'ec2-44-205-41-76.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
